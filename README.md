@@ -1,11 +1,13 @@
-# Bio-XYZ Hackathon - Eliza with bioagent plugin
+# BIOxAI Hackathon - Eliza with bioagent plugin
 
-Chronos — a eliza OS agentic system designed for clinicians and biomedical researchers, combining a semantic network with an autonomous hypothesis engine. It extracts overlooked insights from historical spine surgery records and traditional medical texts, structuring them into RDF triple stores such as [Oxigraph](https://github.com/oxigraph/oxigraph) that bridges ancient wisdom with contemporary science. 
+**Chronos** — an eliza OS agentic system designed for clinicians and biomedical researchers, combining a semantic network with an autonomous hypothesis engine. It extracts overlooked insights from historical spine surgery records and traditional medical texts, structuring them into RDF triple stores such as [Oxigraph](https://github.com/oxigraph/oxigraph) that bridges ancient wisdom with contemporary science. 
 
 ## 🎯**How It Works**
 * **Digitization & Document Extraction**
     * Uses **Landing AI** to digitize undigitized historical spine surgery texts.
     * Extracts relevant clinical content through **agentic document processing**.
+* **Structuring for LLMs**
+    * Uses **LlamaIndex** to preprocess and structure unstructured documents for compatibility with LLMs.
 * **Decentralized Storage**
     * Stores digitized documents on **Pinata**, ensuring decentralized, redundant preservation and accessibility.
 * **Knowledge Graph Construction**
@@ -19,8 +21,7 @@ Chronos — a eliza OS agentic system designed for clinicians and biomedical res
     * An intelligent engine mines the knowledge graph to generate **novel, testable hypotheses**.
     * Each hypothesis is grounded in **contextual evidence**—historical data, modern studies, and semantic bridge nodes.
     * Powered by **OpenAI models** for natural language understanding and reasoning.
-* **Structuring for LLMs**
-    * Uses **LlamaIndex** to preprocess and structure unstructured documents for compatibility with LLMs.
+
 
 ![Chronos-architectutre-diagram](https://github.com/user-attachments/assets/c125757c-8be5-44bb-a575-8d5892759944)
 
