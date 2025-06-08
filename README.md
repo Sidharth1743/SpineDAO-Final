@@ -100,21 +100,22 @@ Update your `.env` file with the following variables:
 
 ```env
 PROD_URL=https://your-production-domain.com # for production
-DEV_URL=https://handsome-bubblegum-shepherd.ngrok-free.app # for local development (from ngrok)
+DEV_URL=https://quick-terminally-minnow.ngrok-free.app # for local development (from ngrok)
 POSTGRES_URL=postgresql://user:password@localhost:5432/dbname
 OPENAI_API_KEY=your_openai_api_key
 GCP_JSON_CREDENTIALS={"type": "service_account", "project_id": "your_project_id", ...}  # Your full GCP service account JSON
 GOOGLE_DRIVE_FOLDER_ID=your_google_drive_folder_id  # Google Drive folder ID for scientific papers
-DISCORD_APPLICATION_ID=your_discord_app_id
-DISCORD_API_TOKEN=your_discord_bot_token
-DISCORD_VOICE_CHANNEL_ID=your_voice_channel_id  # Optional
-DISCORD_CHANNEL_ID=your_text_channel_id
+LLAMA_INDEX_API_KEY=your_llama_api_key
 BIONTOLOGY_KEY=your_biontology_api_key  # Obtain at https://bioportal.bioontology.org/accounts/new
 PINATA_JWT=your_pinataJWT token
 GATEWAY_URL=Your_cloud_gateway_url
 PINATA_API_KEY=pinata_public_key
 PINATA_API_SECRET=pinata_private_key
 VISION_AGENT_API_KEY=your_landing_ai_api_key
+DISCORD_APPLICATION_ID=your_discord_app_id
+DISCORD_API_TOKEN=your_discord_bot_token
+DISCORD_VOICE_CHANNEL_ID=your_voice_channel_id  # Optional
+DISCORD_CHANNEL_ID=your_text_channel_id
 ```
 
 ## 📋 Obtaining Google Cloud Service Account JSON & Setting Permissions
@@ -158,7 +159,7 @@ ngrok http --domain=handsome-bubblegum-shepherd.ngrok-free.app 3000
 Add the ngrok URL to your `.env`:
 
 ```env
-DEV_URL=https://handsome-bubblegum-shepherd.ngrok-free.app
+DEV_URL=https://quick-terminally-minnow.ngrok-free.app
 ```
 
 2. For production:
@@ -167,5 +168,3 @@ DEV_URL=https://handsome-bubblegum-shepherd.ngrok-free.app
 ```env
 PROD_URL=https://your-production-domain.com
 ```
-
-The webhook will automatically use `DEV_URL` in development and `PROD_URL` in production. 🔄📄
