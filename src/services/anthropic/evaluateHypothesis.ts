@@ -5,7 +5,6 @@ import {
 } from "../../evaluators/evaluationPrompt";
 import { EvaluationResult } from "../../evaluators/types";
 import { IAgentRuntime } from "@elizaos/core";
-import { anthropic } from "./client";
 
 export async function evaluateHypothesis(
   hypothesis: string
@@ -25,11 +24,11 @@ export async function evaluateHypothesis(
     ],
   });
 
-  const research = stepOneCompletion.choices[0].message.content;
+  const research = stepOneCompletion.choices[0].message.content || "";
 
   // Step 2: Hypothesis Evaluation
   const stepTwoCompletion = await openai.chat.completions.create({
-    model: "o1",
+    model: "gpt-4o",
     messages: [
       {
         role: "system",
@@ -42,32 +41,31 @@ export async function evaluateHypothesis(
     ],
   });
 
-  const evaluation = stepTwoCompletion.choices[0].message.content;
+  const evaluation = stepTwoCompletion.choices[0].message.content || "";
 
-  const scoreCompletion = await anthropic.messages.create({
-    model: "claude-3-5-haiku-latest",
+  // Step 3: Extract score using OpenAI
+  const scoreCompletion = await openai.chat.completions.create({
+    model: "gpt-4o",
     messages: [
       {
         role: "user",
         content: `You are a scientific hypothesis score extractor. Extract the numerical score (0-100) from the evaluation below. The score should already be present in the text. Output ONLY the integer score, no other text.\n\nEvaluation: ${evaluation}`,
       },
     ],
-    max_tokens: 100,
+    max_tokens: 10,
   });
 
-  const score =
-    scoreCompletion.content[0].type === "text"
-      ? scoreCompletion.content[0].text
-      : "0";
+  const score = scoreCompletion.choices[0].message.content || "0";
+  const timestamp = new Date().toISOString();
 
   return {
     stepOne: {
-      research: research || "",
-      timestamp: new Date().toISOString(),
+      research,
+      timestamp,
     },
     stepTwo: {
-      evaluation: evaluation || "",
-      timestamp: new Date().toISOString(),
+      evaluation,
+      timestamp,
     },
     score,
   };

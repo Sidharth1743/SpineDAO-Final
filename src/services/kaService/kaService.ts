@@ -1,21 +1,19 @@
 import "dotenv/config";
-import { getClient } from "./anthropicClient";
+import OpenAI from "openai";
 import { downloadPaperAndExtractDOI } from "./downloadPaper";
 import { paperExists } from "./sparqlQueries";
 import { logger } from "@elizaos/core";
-import { makeUnstructuredApiRequest } from "./unstructuredPartitioning";
-
+import { makeLlamaIndexParseRequest } from "./unstructuredPartitioning";
 import { processJsonArray, process_paper, create_graph } from "./processPaper";
-import { getSummary } from "./vectorize";
+import { getSummary, type Graph } from "./vectorize";
 import { fromBuffer, fromPath } from "pdf2pic";
 import fs from "fs";
 import { categorizeIntoDAOsPrompt } from "./llmPrompt";
 import DKG from "dkg.js";
-const unstructuredApiKey = process.env.UNSTRUCTURED_API_KEY;
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 type DKGClient = typeof DKG | null;
-
-// const jsonArr = JSON.parse(fs.readFileSync('arxiv_paper.json', 'utf8'));
 
 interface PaperArrayElement {
   metadata: {
@@ -26,80 +24,142 @@ interface PaperArrayElement {
   [key: string]: unknown;
 }
 
-interface TaskInstance {
-  xcom_push(key: string, value: string): void;
-}
-
-interface GeneratedGraph {
-  "@context": Record<string, string>;
-  "@id"?: string;
-  "dcterms:hasPart"?: string;
-  "cito:cites"?: unknown;
-  [key: string]: unknown;
-}
-
 /**
  * Takes an array of JSON elements representing the paper's text
  * and returns a "knowledge assembly" (semantic graph) that includes
  * extracted metadata, citation info, subgraphs, and a summary.
  */
 export async function jsonArrToKa(jsonArr: PaperArrayElement[], doi: string) {
-  const client = getClient();
+  const client = openai;
 
-  const paperArrayDict = await processJsonArray(jsonArr, client);
+  // Clean and validate input
+  const validJsonArr = jsonArr.filter(el => {
+    if (!el.text || typeof el.text !== 'string') {
+      logger.warn('Invalid paper array element', { element: el });
+      return false;
+    }
+    return true;
+  });
 
-  const [
-    generatedBasicInfo,
-    generatedCitations,
-    generatedGoSubgraph,
-    generatedDoidSubgraph,
-    generatedChebiSubgraph,
-    generatedAtcSubgraph,
-  ] = await process_paper(client, paperArrayDict);
+  if (validJsonArr.length === 0) {
+    throw new Error('No valid text content found in paper array');
+  }
 
+  // Process paper content with smart chunking
+  const maxSectionLength = 50000; // Maximum characters per section
+  const maxCitations = 100;       // Maximum citations to process
+  
+  const paperArrayDict = await processJsonArray(
+    validJsonArr.map(el => ({
+      ...el,
+      text: el.text.slice(0, maxSectionLength) // Limit section length
+    })), 
+    client
+  );
+
+  // Process paper to get various components with optimized citations
+  const paperDictWithLimitedCitations = {
+    ...paperArrayDict,
+    citations: paperArrayDict.citations.slice(0, maxCitations)
+  };
+
+  // Process components with error handling
+  let basicInfo = '', citations = '', goSubgraph = '', doidSubgraph = '',
+      chebiSubgraph = '', atcSubgraph = '';
+  
+  try {
+    [
+      basicInfo,
+      citations,
+      goSubgraph,
+      doidSubgraph,
+      chebiSubgraph,
+      atcSubgraph,
+    ] = await process_paper(client, paperDictWithLimitedCitations);
+  } catch (error) {
+    logger.error('Error processing paper components', { error });
+    // Continue with partial results rather than failing completely
+  }
+
+  // Create core graph structure with error recovery
   const generatedGraph = await create_graph(
     client,
-    generatedBasicInfo,
-    generatedCitations,
+    basicInfo || '{}',  // Provide fallback empty objects
+    citations || '[]',
     {
-      go: generatedGoSubgraph,
-      doid: generatedDoidSubgraph,
-      chebi: generatedChebiSubgraph,
-      atc: generatedAtcSubgraph,
+      go: goSubgraph || '[]',
+      doid: doidSubgraph || '[]',
+      chebi: chebiSubgraph || '[]',
+      atc: atcSubgraph || '[]',
     }
   );
 
-  generatedGraph["dcterms:hasPart"] = await getSummary(client, generatedGraph);
+  // Add summary with error handling
+  if (typeof generatedGraph === 'object' && generatedGraph !== null) {
+    try {
+      const graphForSummary: Graph = {
+        ...generatedGraph as Record<string, unknown>,
+        "dcterms:title": generatedGraph["dcterms:title"] as string | undefined,
+        "@id": generatedGraph["@id"] as string | undefined
+      };
 
-  generatedGraph["@id"] = `https://doi.org/${doi}`; // the doi that we extracted from the paper
+      const summary = await getSummary(client, graphForSummary).catch(error => {
+        logger.error('Error generating summary', { error });
+        return ''; // Return empty string on error
+      });
 
-  // Update citations, if they exist
-  // if (
-  //   generatedGraph['cito:cites'] &&
-  //   Array.isArray(generatedGraph['cito:cites']) &&
-  //   generatedGraph['cito:cites'].length > 0
-  // ) {
-  //   generatedGraph['cito:cites'] = getFinalCitations(
-  //     generatedGraph['cito:cites'],
-  //   );
-  // }
+      if (summary) {
+        generatedGraph["dcterms:hasPart"] = summary;
+      }
+    } catch (error) {
+      logger.error('Error adding summary to graph', { error });
+      // Continue without summary rather than failing
+    }
+  }
 
-  // Ensure @context has schema entry
-  const context = generatedGraph["@context"] as Record<string, string>;
-  if (!("schema" in context)) {
-    context["schema"] = "http://schema.org/";
-    logger.info("Added 'schema' to @context in KA");
+  // Set DOI identifier with validation
+  if (doi) {
+    try {
+      // Clean and validate DOI
+      const cleanDoi = doi.trim().replace(/^https?:\/\/doi\.org\/?/i, '');
+      if (cleanDoi) {
+        generatedGraph["@id"] = `https://doi.org/${cleanDoi}`;
+      }
+    } catch (error) {
+      logger.error('Error setting DOI', { error, doi });
+    }
+  }
+
+  // Ensure required namespaces are present
+  try {
+    const context = (generatedGraph["@context"] || {}) as Record<string, string>;
+    generatedGraph["@context"] = context;
+
+    // Add required namespaces if missing
+    const requiredNamespaces = {
+      "schema": "http://schema.org/",
+      "dcterms": "http://purl.org/dc/terms/",
+      "fabio": "http://purl.org/spar/fabio/",
+    };
+
+    for (const [prefix, uri] of Object.entries(requiredNamespaces)) {
+      if (!(prefix in context)) {
+        context[prefix] = uri;
+        logger.info(`Added '${prefix}' namespace to @context in KA`);
+      }
+    }
+  } catch (error) {
+    logger.error('Error managing namespaces', { error });
+  }
+
+  // Validate final graph structure
+  if (!generatedGraph["@type"]) {
+    generatedGraph["@type"] = "fabio:ResearchPaper";
   }
 
   return generatedGraph;
-  // console.log(generatedGraph);
 }
 
-// jsonArrToKa(jsonArr, {
-//   xcom_push: (key: string, value: string) => {
-//     console.log(`${key}: ${value}`);
-//   },
-// });
 /**
 /**
 /**
@@ -181,72 +241,17 @@ const daoUals = {
     "did:dkg:base:84532/0xd5550173b0f7b8766ab2770e4ba86caf714a5af5/101966",
 };
 
-export async function generateKaFromUrls(urls: [string]) {
-  for (const url of urls) {
-    const { pdfBuffer, doi } = await downloadPaperAndExtractDOI(url);
-    if (!pdfBuffer) {
-      throw new Error("Failed to download paper");
-    }
-    if (!doi) {
-      throw new Error("Failed to extract DOI");
-    }
-    const paperArray = await makeUnstructuredApiRequest(
-      pdfBuffer,
-      "paper.pdf",
-      unstructuredApiKey
-    );
-    const ka = await jsonArrToKa(paperArray, doi);
-    const cleanedKa = removeColonsRecursively(ka);
-    return cleanedKa;
-  }
-}
-export interface Image {
-  type: "image";
-  source: {
-    type: "base64";
-    media_type: "image/png";
-    data: string;
-  };
-}
-async function extractDOIFromPDF(images: Image[]) {
-  const client = getClient();
-  const response = await client.messages.create({
-    model: "claude-3-5-haiku-latest",
-    messages: [
-      {
-        role: "user",
-        content: [
-          ...images,
-          {
-            type: "text",
-            text: "Extract the DOI from the paper. Only return the DOI, no other text.",
-          },
-        ],
-      },
-    ],
-    max_tokens: 50,
-  });
-  return response.content[0].type === "text"
-    ? response.content[0].text
-    : undefined;
-}
-
-async function categorizeIntoDAOs(images: Image[]) {
-  const client = getClient();
-  const response = await client.messages.create({
-    model: "claude-3-7-sonnet-20250219",
-    system: categorizeIntoDAOsPrompt,
-    messages: [
-      {
-        role: "user",
-        content: [...images],
-      },
-    ],
-    max_tokens: 50,
-  });
-  return response.content[0].type === "text"
-    ? response.content[0].text
-    : undefined;
+// Converts LlamaIndex Document<Metadata>[] to PaperArrayElement[]
+function llamaIndexDocsToPaperArray(docs: any[]): PaperArrayElement[] {
+  // Each doc: { text: string, metadata: { ... } }
+  // Synthesize page_number if not present
+  return docs.map((doc, idx) => ({
+    text: doc.text,
+    metadata: {
+      page_number: doc.metadata?.page_number ?? idx + 1,
+      ...doc.metadata,
+    },
+  }));
 }
 
 export async function generateKaFromPdf(pdfPath: string, dkgClient: DKGClient) {
@@ -286,12 +291,9 @@ export async function generateKaFromPdf(pdfPath: string, dkgClient: DKGClient) {
   } else {
     logger.info(`Paper ${pdfPath} does not exist in DKG, creating`);
   }
-  const pdfBuffer = fs.readFileSync(pdfPath);
-  const paperArray = await makeUnstructuredApiRequest(
-    pdfBuffer,
-    "paper.pdf",
-    unstructuredApiKey
-  );
+  // Use LlamaIndex for PDF parsing
+  const paperArrayRaw = await makeLlamaIndexParseRequest(pdfPath);
+  const paperArray = llamaIndexDocsToPaperArray(paperArrayRaw);
   const ka = await jsonArrToKa(paperArray, doi);
   const cleanedKa = removeColonsRecursively(ka);
   const relatedDAOsString = await categorizeIntoDAOs(imageMessages);
@@ -323,49 +325,154 @@ export async function generateKaFromPdfBuffer(
   };
   const convert = fromBuffer(pdfBuffer, options);
 
+  // Convert PDF to images - process all pages
   const storeHandler = await convert.bulk(-1, { responseType: "base64" });
 
-  const imageMessages = storeHandler
+  // Process all pages without quality filtering
+  let imageMessages = storeHandler
     .filter((page) => page.base64)
-    .map((page) => ({
+    .map((page, index) => ({
       type: "image" as const,
       source: {
         type: "base64" as const,
         media_type: "image/png" as const,
         data: page.base64!,
       },
+      pageNumber: index + 1
     }));
-  logger.info(`Extracting DOI`);
-  const doi = await extractDOIFromPDF(imageMessages);
-  if (!doi) {
-    throw new Error("Failed to extract DOI");
+
+  if (imageMessages.length === 0) {
+    throw new Error("No valid images could be processed from PDF");
   }
-  const paperArray = await makeUnstructuredApiRequest(
-    pdfBuffer,
-    "paper.pdf",
-    unstructuredApiKey
-  );
+
+  // Extract DOI with fallback options
+  logger.info("Attempting DOI extraction...");
+  let doi: string | null = null;
+  
+  // Try first page
+  doi = await extractDOIFromPDF([imageMessages[0]]);
+  
+  // If no DOI found and we have more pages, try second page
+  if (!doi && imageMessages.length > 1) {
+    logger.info("Retrying DOI extraction on second page...");
+    doi = await extractDOIFromPDF([imageMessages[1]]);
+  }
+  
+  if (!doi) {
+    logger.warn("No DOI found in PDF, will proceed with limited metadata");
+    doi = `local-${Date.now()}`; // Generate temporary local identifier
+  }
+
+  // Write buffer to temporary file for LlamaIndex
+  const tmpPath = `/tmp/ka-pdf-${Date.now()}-${Math.random().toString(36).slice(2)}.pdf`;
+  fs.writeFileSync(tmpPath, pdfBuffer);
+  const paperArrayRaw = await makeLlamaIndexParseRequest(tmpPath);
+  fs.unlinkSync(tmpPath);
+
+  // Process paper content
+  const paperArray = llamaIndexDocsToPaperArray(paperArrayRaw);
   const ka = await jsonArrToKa(paperArray, doi);
   const cleanedKa = removeColonsRecursively(ka);
-  const relatedDAOsString = await categorizeIntoDAOs(imageMessages);
 
+  // Use all images for DAO categorization
+  const relatedDAOsString = await categorizeIntoDAOs(imageMessages);
   const daos = JSON.parse(relatedDAOsString);
 
-  const daoUalsMap = daos.map((dao) => {
-    const daoUal = daoUals[dao];
-    return {
-      "@id": daoUal,
-      "@type": "schema:Organization",
-      "schema:name": dao,
-    };
-  });
+  // Map DAOs to their UALs
+  const daoUalsMap = daos.map((dao) => ({
+    "@id": daoUals[dao],
+    "@type": "schema:Organization",
+    "schema:name": dao,
+  }));
   cleanedKa["schema:relatedTo"] = daoUalsMap;
 
+  // Save sample output for debugging
   const randomId = Math.random().toString(36).substring(2, 15);
+  const sampleDir = "sampleJsonLdsNew";
+  if (!fs.existsSync(sampleDir)) {
+    fs.mkdirSync(sampleDir, { recursive: true });
+  }
   fs.writeFileSync(
-    `sampleJsonLdsNew/ka-${randomId}.json`,
+    `${sampleDir}/ka-${randomId}.json`,
     JSON.stringify(cleanedKa, null, 2)
   );
 
   return cleanedKa;
+}
+
+export async function generateKaFromUrls(urls: [string]) {
+  for (const url of urls) {
+    const { pdfBuffer, doi } = await downloadPaperAndExtractDOI(url);
+    if (!pdfBuffer) {
+      throw new Error("Failed to download paper");
+    }
+    if (!doi) {
+      throw new Error("Failed to extract DOI");
+    }
+    const tmpPath = `/tmp/ka-pdf-${Date.now()}-${Math.random().toString(36).slice(2)}.pdf`;
+    fs.writeFileSync(tmpPath, pdfBuffer);
+    const paperArrayRaw = await makeLlamaIndexParseRequest(tmpPath);
+    fs.unlinkSync(tmpPath);
+    const paperArray = llamaIndexDocsToPaperArray(paperArrayRaw);
+    const ka = await jsonArrToKa(paperArray, doi);
+    const cleanedKa = removeColonsRecursively(ka);
+    return cleanedKa;
+  }
+}
+
+// Image type for PDF page images
+export interface Image {
+  type: "image";
+  source: {
+    type: "base64";
+    media_type: "image/png";
+    data: string;
+  };
+}
+
+// Extract DOI from PDF images using OpenAI
+// Patch: Limit images and truncate base64 for DOI extraction
+async function extractDOIFromPDF(images: Image[]) {
+  // Only use the first image (first page)
+  const limitedImages = images.slice(0, 1).map(img => ({
+    ...img,
+    source: {
+      ...img.source,
+      // Truncate base64 to first 20,000 chars (adjust as needed)
+      data: img.source.data.slice(0, 20000),
+    },
+  }));
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "user",
+        content: [
+          "Extract the DOI from the paper. Only return the DOI, no other text.",
+          ...limitedImages.map(img => `![image](data:${img.source.media_type};base64,${img.source.data})`)
+        ].join("\n"),
+      },
+    ],
+    max_tokens: 50,
+  });
+  return response.choices[0].message.content || undefined;
+}
+
+// Categorize into DAOs using OpenAI
+async function categorizeIntoDAOs(images: Image[]) {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: categorizeIntoDAOsPrompt,
+      },
+      {
+        role: "user",
+        content: images.map(img => `![image](data:${img.source.media_type};base64,${img.source.data})`).join("\n"),
+      },
+    ],
+    max_tokens: 50,
+  });
+  return response.choices[0].message.content || undefined;
 }

@@ -3,14 +3,14 @@
 import { logger } from "@elizaos/core";
 import axios, { AxiosResponse } from "axios";
 import "dotenv/config";
-import { generateResponse } from "./anthropicClient";
+import { generateResponse } from "./anthropicClient"; // Now uses OpenAI
 import {
   get_go_api_prompt,
   get_doid_api_prompt,
   get_chebi_api_prompt,
   get_atc_api_prompt,
 } from "./llmPrompt";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 
 const bioontologyApiKey: string | undefined = process.env.BIONTOLOGY_KEY;
 
@@ -28,8 +28,8 @@ export function extractAtcId(url: string): string | null {
  */
 export async function searchGo(
   term: string,
-  client: Anthropic,
-  modelIdentifier: string = "claude-3-haiku-20240307"
+  client: OpenAI,
+  modelIdentifier: string = "gpt-4o"
 ): Promise<string> {
   const url = "https://www.ebi.ac.uk/QuickGO/services/ontology/go/search";
   const params = { query: term, limit: 5, page: 1 };
@@ -67,8 +67,8 @@ export async function searchGo(
  */
 export async function searchDoid(
   term: string,
-  client: Anthropic,
-  modelIdentifier: string = "claude-3-haiku-20240307"
+  client: OpenAI,
+  modelIdentifier: string = "gpt-4o"
 ): Promise<string> {
   const url = "https://www.ebi.ac.uk/ols/api/search";
   const params = {
@@ -119,8 +119,8 @@ export async function searchDoid(
  */
 export async function searchChebi(
   term: string,
-  client: Anthropic,
-  modelIdentifier: string = "claude-3-haiku-20240307"
+  client: OpenAI,
+  modelIdentifier: string = "gpt-4o"
 ): Promise<string> {
   const url = "https://www.ebi.ac.uk/ols/api/search";
   const params = {
@@ -171,8 +171,8 @@ export async function searchChebi(
  */
 export async function searchAtc(
   term: string,
-  client: Anthropic,
-  modelIdentifier: string = "claude-3-haiku-20240307"
+  client: OpenAI,
+  modelIdentifier: string = "gpt-4o"
 ): Promise<string> {
   const url = "https://data.bioontology.org/search";
   const params = {
@@ -216,24 +216,51 @@ export async function searchAtc(
 /**
  * Update subject and object fields in GO data with best-matching GO terms.
  */
-export async function updateGoTerms(data, client: Anthropic) {
-  for (const entry of data) {
-    const subjectResult = await searchGo(entry.subject, client);
-    entry.subject = { term: entry.subject, id: subjectResult };
-
-    const objectResult = await searchGo(entry.object, client);
-    entry.object = { term: entry.object, id: objectResult };
+export async function updateGoTerms(data: any, client: OpenAI) {
+  // Handle string input (possibly markdown-fenced)
+  if (typeof data === "string") {
+    try {
+      // Remove markdown code fences if present
+      const cleanJson = data.replace(/^```json\n|\n```$/g, "").trim();
+      data = JSON.parse(cleanJson);
+    } catch (e) {
+      logger.error("Failed to parse GO terms data", e);
+      return [];
+    }
   }
 
-  return data.filter(
-    (entry) => entry.subject !== "None" && entry.object !== "None"
-  );
+  // Ensure data is an array
+  if (!Array.isArray(data)) {
+    logger.error("GO terms data is not an array");
+    return [];
+  }
+
+  const processedEntries = [];
+  for (const entry of data) {
+    try {
+      const subjectResult = await searchGo(entry.subject, client);
+      const objectResult = await searchGo(entry.object, client);
+
+      if (subjectResult !== "None" && objectResult !== "None") {
+        processedEntries.push({
+          ...entry,
+          subject: { term: entry.subject, id: subjectResult },
+          object: { term: entry.object, id: objectResult },
+        });
+      }
+    } catch (e) {
+      logger.error(`Error processing GO term entry: ${JSON.stringify(entry)}`, e);
+      continue;
+    }
+  }
+
+  return processedEntries;
 }
 
 /**
  * Update disease fields in DOID data with best-matching DOID terms.
  */
-export async function updateDoidTerms(data, client: Anthropic) {
+export async function updateDoidTerms(data: any, client: OpenAI) {
   for (const entry of data) {
     const diseaseResult = await searchDoid(entry.disease, client);
     entry.disease_id = diseaseResult;
@@ -245,7 +272,7 @@ export async function updateDoidTerms(data, client: Anthropic) {
 /**
  * Update compound fields in ChEBI data with best-matching ChEBI terms.
  */
-export async function updateChebiTerms(data, client: Anthropic) {
+export async function updateChebiTerms(data, client: OpenAI) {
   for (const entry of data) {
     const compoundResult = await searchChebi(entry.compound, client);
     entry.compound_id = compoundResult;
@@ -257,7 +284,7 @@ export async function updateChebiTerms(data, client: Anthropic) {
 /**
  * Update drug fields in ATC data with best-matching ATC terms.
  */
-export async function updateAtcTerms(data, client: Anthropic) {
+export async function updateAtcTerms(data, client: OpenAI) {
   for (const entry of data) {
     const drugResult = await searchAtc(entry.drug, client);
     entry.drug_id = drugResult;

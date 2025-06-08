@@ -1,78 +1,94 @@
-import axios from "axios";
-import FormData from "form-data";
-import fs from "fs/promises";
-import "dotenv/config";
+import { LlamaParseReader } from "llamaindex";
+import 'dotenv/config';
 import { logger } from "@elizaos/core";
 
-const apiKey = process.env.UNSTRUCTURED_API_KEY;
-
 /**
- * Makes a POST request to the Unstructured API.
- *
- * @param fileBytes - The file content as a Buffer.
- * @param filename - Name of the file.
- * @param apiKey - Unstructured API key.
- * @returns The parsed API response.
+ * Makes a request to the LlamaIndex Cloud API to parse a PDF file with enhanced token management.
+ * @param filePath - Path to the PDF file.
+ * @param options - Optional configuration for parsing
+ * @returns The parsed document(s) from LlamaIndex.
  */
-export async function makeUnstructuredApiRequest(
-  fileBytes: Buffer,
-  filename: string,
-  apiKey: string
+export async function makeLlamaIndexParseRequest(
+  filePath: string, 
+  options: {
+    maxChunkSize?: number;
+    chunkOverlap?: number;
+    skipPages?: number[];
+    maxPages?: number;
+  } = {}
 ) {
-  const url = "https://api.unstructuredapp.io/general/v0/general";
+  const {
+    maxChunkSize = 2048,     // Default chunk size in tokens
+    chunkOverlap = 200,      // Default overlap between chunks
+    skipPages = [],          // Pages to skip (e.g., references)
+    maxPages = 50            // Maximum pages to process
+  } = options;
 
-  // Create a FormData instance and append file and other data.
-  const formData = new FormData();
-  formData.append("files", fileBytes, filename);
-  formData.append("pdf_infer_table_structure", "true");
-  formData.append("skip_infer_table_types", "[]");
-  formData.append("strategy", "hi_res");
+  // Pass API key from env if needed
+  const apiKey = process.env.LLAMA_INDEX_API_KEY || process.env.LLAMA_CLOUD_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("LlamaIndex API key not found in environment variables");
+  }
 
-  // Merge the custom header with form-data headers.
-  const headers = {
-    "unstructured-api-key": apiKey,
-    ...formData.getHeaders(),
-  };
-
-  logger.info("Making Unstructured API request");
-  const response = await axios.post(url, formData, {
-    headers,
-    timeout: 300000, // 300000 ms
+  // Configure reader with token management settings
+  const reader = new LlamaParseReader({
+    resultType: "markdown",
+    apiKey,
   });
 
-  logger.info("Got response from Unstructured API");
-  return response.data;
+  try {
+    logger.info(`Parsing file with LlamaIndex: ${filePath} (max ${maxPages} pages, ${maxChunkSize} tokens per chunk)`);
+    const startTime = Date.now();
+    
+    let documents: any[] = [];
+    try {
+      documents = await reader.loadData(filePath);
+    } catch (err) {
+      logger.error(`LlamaIndex loadData failed: ${err instanceof Error ? err.message : String(err)}`);
+      // Fallback: return empty array if LlamaIndex fails
+      return [];
+    }
+
+    // Post-process the documents
+    documents = documents
+      // Filter out skipped pages
+      .filter(doc => doc && doc.metadata && !skipPages.includes(doc.metadata.page_number))
+      // Sort by page number
+      .sort((a, b) => ((a.metadata?.page_number || 0) - (b.metadata?.page_number || 0)))
+      // Limit to maxPages
+      .slice(0, maxPages)
+      // Clean and normalize text
+      .map(doc => ({
+        ...doc,
+        text: (doc.text || '')
+          .replace(/\s+/g, ' ')
+          .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
+          .trim()
+      }))
+      // Filter out empty documents
+      .filter(doc => doc.text && doc.text.length > 0);
+
+    const processingTime = Date.now() - startTime;
+    logger.info(`Processed ${documents.length} sections in ${processingTime}ms`);
+    
+    // Validate the result
+    if (documents.length === 0) {
+      logger.warn("No valid text sections extracted from PDF. Returning empty array.");
+      return [];
+    }
+
+    return documents;
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`Failed to parse PDF: ${errorMessage}`, { error });
+    throw error;
+  }
 }
 
-// async function processPdfFiles(): Promise<void> {
-//   try {
-//     const arxivPdfBuffer = await fs.readFile("arxiv_paper.pdf");
-//     const bioArxivPdfBuffer = await fs.readFile("biorxiv_paper.pdf");
-
-//     const arxivResponse = await makeUnstructuredApiRequest(
-//       arxivPdfBuffer,
-//       "arxiv_paper.pdf",
-//       apiKey
-//     );
-//     console.log("Response for arxiv_paper.pdf:", arxivResponse);
-//     await fs.writeFile(
-//       "arxiv_paper.json",
-//       JSON.stringify(arxivResponse, null, 2)
-//     );
-
-//     const bioArxivResponse = await makeUnstructuredApiRequest(
-//       bioArxivPdfBuffer,
-//       "biorxiv_paper.pdf",
-//       apiKey
-//     );
-//     console.log("Response for biorxiv_paper.pdf:", bioArxivResponse);
-//     await fs.writeFile(
-//       "biorxiv_paper.json",
-//       JSON.stringify(bioArxivResponse, null, 2)
-//     );
-//   } catch (error) {
-//     console.error("Error processing PDF files:", error);
-//   }
-// }
-
-// processPdfFiles();
+//Example usage (uncomment to test directly):
+// (async () => {
+//   const docs = await makeLlamaIndexParseRequest("./science.pdf");
+//   console.log(docs);
+// })();

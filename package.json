@@ -28,7 +28,6 @@
     "@elizaos/cli": "1.0.0-beta.21",
     "@elizaos/core": "1.0.0-beta.21",
     "@elizaos/plugin-anthropic": "1.0.0-beta.21",
-    "@elizaos/plugin-bootstrap": "1.0.0-beta.21",
     "@elizaos/plugin-discord": "1.0.0-beta.21",
     "@elizaos/plugin-openai": "1.0.0-beta.21",
     "@elizaos/plugin-sql": "1.0.0-beta.21",
@@ -42,10 +41,12 @@
     "form-data": "^4.0.2",
     "googleapis": "^148.0.0",
     "jsonld-streaming-parser": "^5.0.0",
+    "llamaindex": "^0.11.6",
     "n3": "^1.24.2",
     "openai": "^4.91.1",
     "pdf2pic": "^3.1.4",
     "pg": "^8.14.1",
+    "pinata": "^2.4.5",
     "punycode": "^2.3.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
@@ -58,7 +59,8 @@
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.6",
     "prettier": "3.5.3",
-    "tsup": "8.4.0"
+    "tsup": "8.4.0",
+    "tsx": "^4.19.4"
   },
   "scripts": {
     "start": "npx @elizaos/cli start",
@@ -72,7 +74,8 @@
     "format": "prettier --write ./src",
     "format:check": "prettier --check ./src",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "jsonld-to-triple": "tsx scripts/jsonldtoTriple.ts"
   },
   "publishConfig": {
     "access": "public"

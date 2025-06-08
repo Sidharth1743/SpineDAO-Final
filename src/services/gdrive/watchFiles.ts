@@ -10,6 +10,10 @@ import { OpenAIImage } from "./extract/types.js";
 import { generateKa } from "./extract";
 import { storeJsonLd } from "./storeJsonLdToKg.js";
 import { db, fileMetadataTable } from "src/db";
+import { uploadToPinata } from "../pinata/client.js";
+import fs from "fs";
+import path from "path";
+import { processAndUploadDigitizedText } from "../pinata/ocrPinataService";
 
 type Schema$File = drive_v3.Schema$File;
 
@@ -47,7 +51,43 @@ export async function downloadFile(
     }
   );
 
-  return Buffer.from(res.data as ArrayBuffer);
+  const buffer = Buffer.from(res.data as ArrayBuffer);
+  
+  // Process through OCR and upload to Pinata
+  try {
+    const result = await processAndUploadDigitizedText(
+      buffer,
+      file.name || 'unnamed.pdf'
+    );
+    logger.info(`File processed and uploaded to Pinata with hash: ${result.pinataResponse.IpfsHash}`);
+    logger.info(`Digitized text saved at: ${result.digitizedFilePath}`);
+
+    // Store Pinata response in pinata/uploads
+    const uploadsDir = path.join(__dirname, '../pinata/uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    // Create a unique filename using timestamp and original filename
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const safeFileName = `${timestamp}_${(file.name || 'unnamed.pdf').replace(/[^a-zA-Z0-9._-]/g, '_')}.json`;
+    
+    // Add IPFS URL to the response
+    const responseWithUrl = {
+      ...result.pinataResponse,
+      ipfsUrl: `https://${process.env.GATEWAY_URL}/ipfs/${result.pinataResponse.IpfsHash}`,
+      digitizedFilePath: result.digitizedFilePath
+    };
+
+    const responsePath = path.join(uploadsDir, safeFileName);
+    fs.writeFileSync(responsePath, JSON.stringify(responseWithUrl, null, 2));
+    logger.info(`Pinata response saved to ${responsePath}`);
+  } catch (error) {
+    logger.error("Failed to process and upload to Pinata:", error);
+    // Continue with the process even if Pinata upload fails
+  }
+
+  return buffer;
 }
 
 async function getFilesInfo(): Promise<FileInfo[]> {
@@ -55,7 +95,7 @@ async function getFilesInfo(): Promise<FileInfo[]> {
   const query = getListFilesQuery();
   const response = await drive.files.list(query);
 
-  return (response.data.files || [])
+  const files = (response.data.files || [])
     .filter(
       (
         f
@@ -76,6 +116,11 @@ async function getFilesInfo(): Promise<FileInfo[]> {
       md5Checksum: f.md5Checksum,
       size: f.size,
     }));
+
+  // Log the raw file metadata to debug
+  logger.info("Raw file metadata:", response.data.files);
+
+  return files;
 }
 
 export async function watchFolderChanges(runtime: IAgentRuntime) {

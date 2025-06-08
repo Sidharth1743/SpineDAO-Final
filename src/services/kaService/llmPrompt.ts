@@ -105,13 +105,13 @@ export function get_prompt_basic_info(paper_array): string {
     7. Identify the page numbers that indicate where the paper is located within the journal.
     8. Identify the DOI (Digital Object Identifier) which provides a persistent link to the paper's online location.
     9. Capture key experimental details such as:
-        OBI_0000299 'has_specified_output': Describe the types of data or results produced by the research.
-        OBI_0000968 'instrument': Specify the instruments or equipment used in the research.
+        OBI_0000299 'has_specified_output': Describe the types of data or results produced by the research or medical treatment or practice.
+        OBI_0000968 'instrument': Specify the instruments or equipment used in the research or treatment.
         OBI_0000293 'has_specified_input': Identify inputs such as samples or data sets utilized in the study.
         OBI_0200000 'data transformation': Explain any computational or analytical methods applied to raw data.
         OBI_0000251 'recruitment status': For clinical studies, provide details on the status of participant recruitment.
         OBI_0000070 'assay': Describe the specific assays used in the study to measure or observe biological, chemical, or physical processes, essential for validating the experimental hypothesis and ensuring reproducibility.
-        IAO_0000616 'conflict of interest': If there's a conflict of interest mentioned in the paper, describe it here.
+        IAO_0000616 'conflict of interest': If there's a conflict of interest mentioned in the paper/treatment, describe it here.
 
     **Example Input (ONLY AN EXAMPLE, DO NOT COPY DATA FROM HERE FOR ACTUAL OUTPUT)**
     ${basic_info_example_input}
@@ -690,6 +690,7 @@ Cerebrum DAO → Brain health, neurodegeneration, Alzheimer's research
 Curetopia → Rare disease research, genetic disorders, orphan drug discovery
 Long COVID Labs → Long COVID, post-viral syndromes, chronic illness research
 Quantum Biology DAO → Quantum biology, biophysics, quantum effects in biology
+SpineDAO - Spinal health, orthopedic research, AI-assisted clinical hypothesis mining
 </dao_list>
 
 Return your output **only** as a JSON array of DAO names. If no DAOs are relevant, return an empty array.

@@ -214,12 +214,26 @@ async function processFile(
 
 /**
  * Updates the page token for future syncs
+ *
+ * Also logs the previous token for debugging and ensures the update only occurs if the token is different.
  */
 async function updatePageToken(
   runtime: IAgentRuntime,
   driveId: string,
   newToken: string
 ): Promise<void> {
+  // Fetch the current token for logging
+  const current = await runtime.db
+    .select()
+    .from(driveSyncTable)
+    .where(eq(driveSyncTable.id, driveId));
+
+  const prevToken = current[0]?.startPageToken;
+  if (prevToken === newToken) {
+    logger.info(`Page token unchanged (${newToken}), skipping update.`);
+    return;
+  }
+
   await runtime.db
     .update(driveSyncTable)
     .set({
@@ -228,5 +242,5 @@ async function updatePageToken(
     })
     .where(eq(driveSyncTable.id, driveId));
 
-  logger.info(`Updated start page token to: ${newToken}`);
+  logger.info(`Updated start page token from: ${prevToken} to: ${newToken}`);
 }

@@ -1,3 +1,4 @@
+//generatehypothesis.ts
 import fs from "fs/promises";
 import { splitMarkdownForDiscord } from "./discordSplitter";
 import {
@@ -7,7 +8,7 @@ import {
 import { Binding, Abstract, Finding, FindingResult, Hypothesis } from "./types";
 import { sparqlRequest } from "./sparql/makeRequest";
 import { FileError, SparqlError } from "./errors";
-import { anthropic } from "./client";
+import { openai } from "./client";
 import { logger, IAgentRuntime } from "@elizaos/core";
 import {
   getKeywordsQuery,
@@ -181,10 +182,16 @@ ${
 export async function generateHypothesis(
   agentRuntime: IAgentRuntime
 ): Promise<{ hypothesis: string; hypothesisMessageId: string }> {
-  const channel = await agentRuntime
-    .getService("discord")
-    // @ts-ignore
-    .client.channels.fetch(process.env.DISCORD_CHANNEL_ID);
+  // Fix: robustly get the discord channel, supporting both .client.channels and .channels, using type assertions to avoid TS errors
+  const discordService = await agentRuntime.getService("discord");
+  let channel;
+  if ((discordService as any)?.client?.channels) {
+    channel = await (discordService as any).client.channels.fetch(process.env.DISCORD_CHANNEL_ID);
+  } else if ((discordService as any)?.channels) {
+    channel = await (discordService as any).channels.fetch(process.env.DISCORD_CHANNEL_ID);
+  } else {
+    throw new Error("Discord service is not configured correctly: missing channels property");
+  }
   logger.info("Generating hypothesis...");
   try {
     // Fetch and choose findings
@@ -251,20 +258,14 @@ export async function generateHypothesis(
     );
 
     logger.info("Generating hypothesis...");
-    const response = await anthropic.messages.create({
-      model: "claude-3-7-sonnet-latest",
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
       messages: [{ role: "user", content: hypothesisGenerationPrompt }],
-      max_tokens: 5001,
-      thinking: {
-        type: "enabled",
-        budget_tokens: 5000,
-      },
+      max_tokens: 4096,
     });
 
     const hypothesis =
-      response.content[1]?.type === "text"
-        ? response.content[1].text
-        : "No hypothesis generated";
+      response.choices[0]?.message.content || "No hypothesis generated";
 
     logger.info("Generated Hypothesis:");
     logger.info(hypothesis);
@@ -297,7 +298,7 @@ export async function generateHypothesis(
       const message = await channel.send(chunk.content);
       messageIds.push(message.id);
     }
-    return { hypothesis, hypothesisMessageId: messageIds[0] }; // return the first message id, which is the hypothesis heading
+    return { hypothesis, hypothesisMessageId: messageIds[0] };
   } catch (error) {
     if (error instanceof SparqlError) {
       console.error("SPARQL Error:", error.message);

@@ -22,7 +22,7 @@ import {
 
 import { extractBracketContent, isEmptyArray } from "./regex";
 import { logger } from "@elizaos/core";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 
 /** Generic JSON-like type for representing arbitrary structures. */
 type JSONValue =
@@ -72,7 +72,7 @@ const CITATIONS_OFFSET = 6;
  * Extract page ranges for known sections (Abstract, Introduction, Methods, etc.).
  */
 export async function extractSections(
-  client: Anthropic,
+  client: OpenAI,
   paper_array: PaperArrayElement[]
 ): Promise<LabelPageRanges> {
   const originalLabels = [
@@ -206,7 +206,7 @@ export async function extractSections(
     const answer = await generateResponse(
       client,
       prompt,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
 
@@ -259,7 +259,7 @@ export async function extractSections(
  * Return a string containing basic info about the paper, or "" on error.
  */
 export async function getGeneratedBasicInfoText(
-  client: Anthropic,
+  client: OpenAI,
   paper_dict: PaperDict
 ): Promise<string> {
   const spar_array = Array.from(
@@ -285,7 +285,7 @@ export async function getGeneratedBasicInfoText(
  * Return a string containing citations, or "" on error.
  */
 export async function getGeneratedCitations(
-  client: Anthropic,
+  client: OpenAI,
   paper_dict: PaperDict
 ): Promise<string> {
   try {
@@ -293,7 +293,7 @@ export async function getGeneratedCitations(
     const generated_citations = await generateResponse(
       client,
       prompt_citations,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger.info(`Generated citations from Claude: ${generated_citations}`);
@@ -308,7 +308,7 @@ export async function getGeneratedCitations(
  * Generate a GO subgraph from relevant sections, then refine it via update_go_terms.
  */
 export async function getGoGeneratedSubgraphText(
-  client: Anthropic,
+  client: OpenAI,
   paper_dict: PaperDict
 ): Promise<string> {
   try {
@@ -324,7 +324,7 @@ export async function getGoGeneratedSubgraphText(
     let generated_subgraph_text = await generateResponse(
       client,
       prompt_subgraph,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger.info(
@@ -353,7 +353,7 @@ export async function getGoGeneratedSubgraphText(
  * Generate a DOID subgraph from relevant sections, then refine it via update_doid_terms.
  */
 export async function getDoidGeneratedSubgraphText(
-  client: Anthropic,
+  client: OpenAI,
   paper_dict: PaperDict
 ): Promise<string> {
   try {
@@ -369,7 +369,7 @@ export async function getDoidGeneratedSubgraphText(
     const generated_subgraph_text = await generateResponse(
       client,
       prompt_subgraph,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger.info(
@@ -396,7 +396,7 @@ export async function getDoidGeneratedSubgraphText(
  * Generate a ChEBI subgraph from relevant sections, then refine it via update_chebi_terms.
  */
 export async function getChebiGeneratedSubgraphText(
-  client: Anthropic,
+  client: OpenAI,
   paper_dict: PaperDict
 ): Promise<string> {
   try {
@@ -412,7 +412,7 @@ export async function getChebiGeneratedSubgraphText(
     const generated_subgraph_text = await generateResponse(
       client,
       prompt_subgraph,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger.info(
@@ -439,7 +439,7 @@ export async function getChebiGeneratedSubgraphText(
  * Generate an ATC subgraph from relevant sections, then refine it via update_atc_terms.
  */
 export async function getAtcGeneratedSubgraphText(
-  client: Anthropic,
+  client: OpenAI,
   paper_dict: PaperDict
 ): Promise<string> {
   try {
@@ -455,7 +455,7 @@ export async function getAtcGeneratedSubgraphText(
     const generated_subgraph_text = await generateResponse(
       client,
       prompt_subgraph,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger.info(
@@ -482,7 +482,7 @@ export async function getAtcGeneratedSubgraphText(
  * Launch parallel tasks to produce each piece of data from a single paper.
  */
 export async function process_paper(
-  client: Anthropic,
+  client: OpenAI,
   paper_dict: PaperDict
 ): Promise<PaperProcessResult> {
   const [
@@ -531,14 +531,14 @@ export function fix_json_string_manually(json_string: string): string {
  * Convert freeform citations text into a JSON-LD array (SPAR citations).
  */
 export async function get_subgraph_citations(
-  client: Anthropic,
+  client: OpenAI,
   citations_text: string
 ): Promise<JSONValue> {
   const prompt_spar_citations = get_prompt_spar_citations(citations_text);
   const generated_citations_spar_text = await generateResponse(
     client,
     prompt_spar_citations,
-    "claude-3-5-sonnet-20241022",
+    "gpt-4o",
     8192
   );
   logger.info(
@@ -560,7 +560,7 @@ export async function get_subgraph_citations(
  * Use SPAR+OBI ontology prompt to convert basic info text into JSON-LD.
  */
 export async function get_subgraph_basic_info(
-  client: Anthropic,
+  client: OpenAI,
   basic_info_text: string
 ): Promise<string> {
   if (isEmptyArray(basic_info_text)) {
@@ -571,7 +571,7 @@ export async function get_subgraph_basic_info(
   const generated_graph_text = await generateResponse(
     client,
     prompt_spar_ontology_,
-    "claude-3-5-sonnet-20241022",
+    "gpt-4o",
     8192
   );
   logger.info(`Generated SPAR graph from Claude: ${generated_graph_text}`);
@@ -587,7 +587,7 @@ export async function get_subgraph_basic_info(
  * Convert a GO subgraph from raw JSON to an ontology array (JSON-LD).
  */
 export async function get_subgraph_go(
-  client: Anthropic,
+  client: OpenAI,
   generated_go_subgraph: string
 ): Promise<JSONValue> {
   try {
@@ -598,7 +598,7 @@ export async function get_subgraph_go(
     const generated_graph_text = await generateResponse(
       client,
       prompt_go_ontology_,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger.info(`Generated GO subgraph from Claude: ${generated_graph_text}`);
@@ -680,7 +680,7 @@ export function get_subgraph_atc(generated_atc_subgraph: string): JSONValue {
  * Build a final combined JSON-LD-like graph from basic info, citations, and subgraphs.
  */
 export async function create_graph(
-  client: Anthropic,
+  client: OpenAI,
   basic_info_text: string,
   citations_text: string,
   subgraph: SubgraphSet
@@ -814,7 +814,7 @@ export function create_section_arrays(
  */
 export async function processJsonArray(
   paper_array: PaperArrayElement[],
-  client: Anthropic
+  client: OpenAI
 ): Promise<PaperDict> {
   const section_ranges = await extractSections(client, paper_array);
   const paper_array_dict = create_section_arrays(paper_array, section_ranges);
@@ -843,13 +843,13 @@ export async function get_suggested_questions(
     const generated_questions_text = await generateResponse(
       client,
       prompt_questions,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
 
     const lines = generated_questions_text.trim().split("\n");
     const questions = lines.filter((q) => q.trim().length > 0);
-    logger.info(`Generated suggested questions from Claude: ${questions}`);
+    logger.info(`Generated suggested questions from OpenAI: ${questions}`);
     return questions;
   } catch (e) {
     logger.error("Error generating questions", e);

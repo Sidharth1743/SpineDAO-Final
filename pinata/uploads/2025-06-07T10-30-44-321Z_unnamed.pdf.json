@@ -1,0 +1,13 @@
+{
+  "IpfsHash": "QmWBktwMHcZ2nMxnQoH65FXXWWvJDpv87Z51jobkBFJEUj",
+  "PinSize": 10017,
+  "Timestamp": "2025-06-07T10:30:43.795Z",
+  "ID": "29efd369-f192-4944-b79b-c4906129c5f8",
+  "Name": "unnamed-digitized.txt",
+  "NumberOfFiles": 1,
+  "MimeType": "text/plain",
+  "GroupId": null,
+  "Keyvalues": null,
+  "ipfsUrl": "https://cyan-raw-whippet-306.mypinata.cloud/ipfs/QmWBktwMHcZ2nMxnQoH65FXXWWvJDpv87Z51jobkBFJEUj",
+  "digitizedFilePath": "digitized/unnamed-digitized.txt"
+}

@@ -6,6 +6,9 @@ import { fileMetadataTable, fileStatusEnum } from "src/db/schemas";
 import { downloadFile, initDriveClient, FileInfo } from "./gdrive";
 import { generateKaFromPdfBuffer } from "./kaService/kaService";
 import { storeJsonLd } from "./gdrive/storeJsonLdToKg";
+import { processAndUploadDigitizedText } from "./pinata/ocrPinataService";
+
+export { processAndUploadDigitizedText };
 
 export class HypothesisService extends Service {
   static serviceType = "hypothesis";
@@ -37,7 +40,7 @@ export class HypothesisService extends Service {
 
         // Store KA in knowledge graph using existing function
         try {
-          const success = await storeJsonLd(ka);
+          const success = await storeJsonLd(ka as object);
           if (success) {
             logger.info("Successfully stored KA data in Oxigraph");
           }

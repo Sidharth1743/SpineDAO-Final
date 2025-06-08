@@ -1,14 +1,14 @@
 // vectorize.ts
 
-import { get_prompt_vectorization_summary } from "./llmPrompt"; // Adjust path as needed
-import { generateResponse } from "./anthropicClient"; // Adjust path as needed
-import Anthropic from "@anthropic-ai/sdk";
+import { get_prompt_vectorization_summary } from "./llmPrompt";
+import { generateResponse } from "./anthropicClient"; // Now uses OpenAI
+import OpenAI from "openai";
 import { logger } from "@elizaos/core";
 
 /**
  * The general structure of your graph object. Extend with any additional fields you need.
  */
-interface Graph {
+export interface Graph {
   [key: string]: unknown;
   "dcterms:title"?: string;
   "@id"?: string;
@@ -37,14 +37,14 @@ interface SimilarCitationResult {
  * @param graph  - The graph/dictionary containing paper metadata
  */
 export async function getSummary(
-  client: Anthropic,
+  client: OpenAI,
   graph: Graph
 ): Promise<string> {
   let summary = "";
   try {
     const prompt = get_prompt_vectorization_summary(graph);
-    summary = await generateResponse(client, prompt);
-    logger.info(`Generated graph summary from Claude: ${summary}`);
+    summary = await generateResponse(client, prompt, "gpt-4o");
+    logger.info(`Generated graph summary from OpenAI: ${summary}`);
   } catch (error) {
     logger.error("Generated graph summary exception", error);
     summary = "";

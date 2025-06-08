@@ -1,5 +1,4 @@
 import "dotenv/config";
-import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 import Instructor, { InstructorClient as IC } from "@instructor-ai/instructor";
 import path from "path";
@@ -9,12 +8,8 @@ const __dirname = path.resolve();
 
 export default class Config {
   private static _instance: Config;
-  private static _anthropicClient: Anthropic;
   private static _openaiClient: OpenAI;
   private static _instructorOai: IC<OpenAI>;
-  private static _instructorAnthropic: IC<Anthropic>;
-  private static _anthropicModel: string =
-    process.env.ANTHROPIC_MODEL || "claude-3-7-sonnet-latest";
   private static _openaiModel: string = process.env.OPENAI_MODEL || "gpt-4o";
   private static _papersDirectory: string = path.join(__dirname, "papers");
   private static _pdf2PicOptions: any = {
@@ -27,11 +22,6 @@ export default class Config {
   private constructor() {}
 
   private static initialize() {
-    if (!this._anthropicClient) {
-      this._anthropicClient = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY,
-      });
-    }
     if (!this._openaiClient) {
       this._openaiClient = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
@@ -44,14 +34,6 @@ export default class Config {
         mode: "JSON",
       });
     }
-
-    // TODO: Anthropic not yet supported
-    // if (!this._instructorAnthropic) {
-    //   this._instructorAnthropic = Instructor({
-    //     client: this._anthropicClient,
-    //     mode: "JSON",
-    //   });
-    // }
 
     if (!fs.existsSync(this._papersDirectory)) {
       fs.mkdirSync(this._papersDirectory, { recursive: true });
@@ -70,24 +52,9 @@ export default class Config {
     return this._instance;
   }
 
-  public static get anthropicClient(): Anthropic {
-    this.getInstance();
-    return this._anthropicClient;
-  }
-
   public static get openaiClient(): OpenAI {
     this.getInstance();
     return this._openaiClient;
-  }
-
-  public static get anthropicModel(): string {
-    this.getInstance();
-    return this._anthropicModel;
-  }
-
-  public static set anthropicModel(model: string) {
-    this.getInstance();
-    this._anthropicModel = model;
   }
 
   public static get openaiModel(): string {
@@ -123,10 +90,5 @@ export default class Config {
   public static get instructorOai() {
     this.getInstance();
     return this._instructorOai;
-  }
-
-  public static get instructorAnthropic() {
-    this.getInstance();
-    return this._instructorAnthropic;
   }
 }

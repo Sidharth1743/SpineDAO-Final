@@ -1,0 +1,1239 @@
+{BnF Gallica
+L'Art de guérir les hernies ou descentes... par M. Balin,...
+Source gallica.bnf.fr / Bibliothèque nationale de France
+logo: BnF Gallica
+
+Summary : This image is a logo representing "BnF Gallica", the digital library platform of the Bibliothèque nationale de France (BnF).
+
+Logo Elements :
+  • The logo consists of a grey rectangular block on the left containing the text “BnF” in white, with a stylized left curly brace “{” preceding the letters.
+  • To the right, the word “Gallica” appears in grey on a white background, using a sans-serif font.
+  • The overall colour palette is monochrome grey and white.
+  • The logo is horizontally oriented, with the “BnF” block and “Gallica” text aligned on the same baseline.
+
+Dimensions & Placement :
+  • The “BnF” block is approximately square, while the “Gallica” text extends horizontally to the right.
+  • The curly brace and “BnF” are vertically centered within the block.
+
+Analysis :
+  • The logo visually associates the BnF (Bibliothèque nationale de France) with its Gallica digital library service, using a modern, minimalist design and a neutral colour scheme to convey professionalism and institutional identity.
+Balin (01). Auteur du texte. L'Art de guérir les hernies ou
+descentes... par M. Balin,.... 1784.
+1/ Les contenus accessibles sur le site Gallica sont pour la plupart des reproductions numériques d'oeuvres tombées dans le domaine public provenant des collections de la BnF. Leur réutilisation s'inscrit dans le cadre de la loi n°78-753 du 17 juillet 1978 :
+- La réutilisation non commerciale de ces contenus ou dans le cadre d’une publication académique ou scientifique est libre et gratuite dans le respect de la législation en vigueur et notamment du maintien de la mention de source des contenus telle que précisée ci-après : « Source gallica.bnf.fr / Bibliothèque nationale de France » ou « Source gallica.bnf.fr / BnF ».
+- La réutilisation commerciale de ces contenus est payante et fait l'objet d'une licence. Est entendue par réutilisation commerciale la revente de contenus sous forme de produits élaborés ou de fourniture de service ou toute autre réutilisation des contenus générant directement des revenus : publication vendue (à l’exception des ouvrages académiques ou scientifiques), une exposition, une production audiovisuelle, un service ou un produit payant, un support à vocation promotionnelle etc.
+CLIQUER ICI POUR ACCÉDER AUX TARIFS ET À LA LICENCE
+__________________________________________________________________
+2/ Les contenus de Gallica sont la propriété de la BnF au sens de l'article L.2112-1 du code général de la propriété des personnes publiques.
+3/ Quelques contenus sont soumis à un régime de réutilisation particulier. Il s'agit :
+
+- des reproductions de documents protégés par un droit d'auteur appartenant à un tiers. Ces documents ne peuvent être réutilisés, sauf dans le cadre de la copie privée, sans l'autorisation préalable du titulaire des droits.
+- des reproductions de documents conservés dans les bibliothèques ou autres institutions partenaires. Ceux-ci sont signalés par la mention Source gallica.BnF.fr / Bibliothèque municipale de ... (ou autre partenaire). L'utilisateur est invité à s'informer auprès de ces bibliothèques de leurs conditions de réutilisation.
+4/ Gallica constitue une base de données, dont la BnF est le
+producteur, protégée au sens des articles L341-1 et suivants du
+code de la propriété intellectuelle.
+5/ Les présentes conditions d'utilisation des contenus de Gallica sont régies par la loi française. En cas de réutilisation prévue dans un autre pays, il appartient à chaque utilisateur de vérifier la conformité de son projet avec le droit de ce pays.
+6/ L'utilisateur s'engage à respecter les présentes conditions d'utilisation ainsi que la législation en vigueur, notamment en matière de propriété intellectuelle. En cas de non respect de ces dispositions, il est notamment passible d'une amende prévue par la loi du 17 juillet 1978.
+7/ Pour obtenir un document de Gallica en haute définition, contacter  
+utilisation.commerciale@bnf.fr.
+Politique.
+128
+*Paris, 14 août.*
+Depuis quelque tems, on voit les écrivains politiques
+s’agiter pour & contre le traité d’alliance que la France
+& l’Espagne ont contracté. Les uns veulent qu’on rompe un
+traité, qui peut à chaque instant constituer la France en
+état de guerre ; les autres pensent qu’on doit le conserver
+dans toute son intégrité, & que de son maintien dépend le
+salut de l’état. Il en est d’autres qui proposent un terme
+moyen, c’est de modifier ce même traité, en le réduisant
+aux conditions purement défensives. « Le pacte de famille,
+disent-ils, doit disparaître, & un pacte national le rem-
+placer. Les articles, qui renferment quelques stipulations
+offensives, seront effacés ; mais tous ceux qui stipulent
+l’engagement d’une défense réciproque, doivent être re-
+nouvelles, référés, & consacrés par le vœu national. »
+Dans cette dernière opinion, la France feroit dans l’o-
+bligation d’être auxiliaire de l’Espagne, aussi souvent que
+celle-ci feroit dans le cas de faire une guerre défensive,
+quel qu’en fût la cause. Il nous semble que ce rôle subal-
+terne convient peu à la puissance Françoise. Si elle doit
+jouer un rôle dans l’Europe, c’est celle de puissance médiatrice,
+armée pour l’observation des loix de la justice. Naturelle-
+ment alliée de toutes les nations, elle ne doit avoir de traité
+particulier avec aucune d’elles. Amie de tout les peuples,
+il est de sa dignité, il est même de son devoir de mar-
+cher contre le premier qui déployera l’étendard de la guerre.
+Toute agression ne nuit pas seulement au peuple qui
+souffre l’invasion; mais aussi de proche en proche à tous
+les peuples de la terre.
+L'  A R T
+
+    DE GUÉRIR
+
+LES HERNIES
+
+    OU
+
+DESCENTES.
+Summary : This is a handwritten chemical isotope notation for tellurium-128, indicating the element symbol, mass number, atomic number, and a label.
+
+chemical notation:
+Element & Isotope :
+  • Element symbol: Te (tellurium).
+  • Mass number (top right): 128.
+  • Atomic number (bottom right): 52 (represented as "B", which may be a miswriting; the correct atomic number for Te is 52).
+  • Additional numbers: 91 (top right, possibly a miswriting or extraneous mark).
+
+Layout :
+  • "Te" is written in large script on the left.
+  • To the right, vertically aligned: "91" (top), "8" (middle), "B" (bottom).
+
+Analysis :
+  • The notation appears to represent the isotope tellurium-128, but the numbers "91", "8", and "B" do not correspond to standard isotope notation for tellurium (which would be 128 for mass number and 52 for atomic number). The "B" may be a miswritten "52". The arrangement mimics standard nuclear notation, but the values are inconsistent with tellurium's known isotopes.
+L'ART  
+DE GUÉRIR  
+LES HERNIES  
+OU  
+DESCENTES;
+OUVRAGE UTILE AUX PERSONNES
+attaquées de ces Maladies, & dans lequel
+on trouvera la meilleure méthode de
+construire les Bandages convenables à
+leur curation.
+TROISIEME ÉDITION :
+Corrigée & augmentée d’un Vocabulaire Français.
+
+Par M. BALIN, reçu au Collége Royal de Chirurgie
+pour les Hernies, Chirurgien-Herniaire des Hôpi-
+taux & Prisons de Paris, & ci-devant Chirurgien
+aux Armées.
+Summary : This is a circular ink stamp featuring the text "BIBLIOTHEQUE ROYALE" and a central illustration of a stylized ship with a curved prow and stern, likely a galley, with a palm or feather motif at the stern. The stamp partially overlaps printed text, including the word "PARIS," and is oriented at an angle.
+
+stamp:  
+Shape & Border :  
+  • Circular stamp with a single-line border.  
+  • Diameter approximately equal to the height of the capital letters in "PARIS" (relative scale).  
+
+Text :  
+  • "BIBLIOTHEQUE ROYALE" in uppercase, running along the inner circumference.  
+  • Some additional text at the top, partially visible: "aux Armées."  
+  • Orientation: text is rotated counterclockwise relative to the underlying print.  
+
+Graphic Elements :  
+  • Central image of a stylized ship (galley) with a curved prow and stern.  
+  • The stern features a palm or feather-like flourish.  
+  • The ship is rendered in black ink with visible linework.  
+
+Placement & Overlap :  
+  • The stamp overlaps printed text, including the word "PARIS," which is partially obscured.  
+  • The stamp is not perfectly horizontal; it is rotated counterclockwise.  
+
+Analysis :  
+  • The stamp signifies ownership or cataloguing by the "Bibliothèque Royale" (Royal Library), likely in Paris.  
+  • The ship motif and palm/feather flourish are traditional emblems, possibly referencing Paris or the French monarchy.  
+  • The stamp's placement over text suggests it was applied after printing, as a library or archival mark.
+Chez l'Auteur, place de Gréve, au coin  
+de la rue de la Tannerie.
+M. DCC. LXXXIV.  
+Avec Approbation & Privilége du Roi.
+Summary : This image shows a high-contrast, black-and-white region with irregular, scattered black markings on a white background, possibly representing a small section of a larger abstract or scientific image.
+
+photo:
+Scene Overview :
+  • The image is a vertical crop with a predominantly white background.
+  • Black markings are scattered throughout, with two denser, irregularly shaped black regions—one near the upper left and another toward the lower left.
+  • The markings are non-uniform, with some appearing as small dots and others as larger, more solid patches.
+  • No discernible objects, text, or recognizable features are present.
+
+Technical Details :
+  • No scale bar, magnification, or annotation is visible.
+  • The image is monochrome (black and white).
+  • No UI elements or overlays are present.
+
+Spatial Relationships :
+  • The denser black regions are located toward the left edge, with a diagonal orientation from upper left to lower right.
+  • Sparse black dots are distributed across the rest of the image, with more white space dominating the right side.
+
+Analysis :
+  • The image appears to be a detail or crop from a larger abstract, scientific, or technical figure, possibly showing a texture, pattern, or artifact.
+  • No specific subject or pattern is clearly identifiable within this crop.
+Summary : This is a decorative black-and-white illustration, likely a woodcut or engraving, featuring a rural scene framed by ornate foliage and scrollwork.
+
+illustration:
+Scene Overview :
+  • Central vignette shows a small house or cottage with a pitched roof, a tree to the left, and a path or road leading toward the foreground.
+  • Two birds are flying in the sky above the house.
+  • The scene is enclosed within an elaborate border of intertwined leaves, flowers, and scrolls.
+  • The composition is horizontally rectangular, with the rural scene occupying the center and the decorative elements filling the sides.
+
+Technical Details :
+  • No text, scale bar, or numeric information is present.
+  • The illustration is rendered in black and white with linework typical of historical book ornamentation.
+
+Spatial Relationships :
+  • The house and tree are centrally placed, framed symmetrically by the decorative foliage.
+  • The path leads the viewer’s eye from the foreground toward the house in the background.
+
+Analysis :
+  • The image serves as a decorative header or vignette, evoking a pastoral or idyllic countryside setting. The ornate border draws attention to the central rural scene, suggesting themes of nature, tranquility, or domesticity.
+A  M O N S I E U R  
+L E   M A R Q U I S  
+DE SERENT,
+MARÉCHAL DES CAMPS ET  
+ARMÉES DU ROI, GOUVERNEUR  
+DE MONSEIGNEUR LE DUC  
+D'ANGOULEME, ET DE  
+MONSEIGNEUR LE DUC DE  
+BERRY, &c. &c.
+Monsieur,
+L'OUVRAGE que j'ai l'honneur  
+de mettre sous votre protection, n'est  
+pas naturellement d'une espèce à  
+vous être présenté. Mais les bontés  
+que vous m'avez témoignées dans la  
+guerre en Allemagne, & le goût que je
+$4^2$
+ij
+
+E P I T R E
+
+vous connois pour tout ce qui peut
+être utile à l’humanité, me font espé-
+rer que vous voudrez bien agréer
+l’hommage de ce travail, que l’in-
+térêt public m’a fait entreprendre.
+Trop heureux s’il peut être de quel-
+qu’utilité à mes concitoyens, & 
+vous être une preuve du profond
+respect avec lequel j’ai l’honneur
+d’être,
+MONSIEUR,
+Votre très - humble &  
+très-obéïssant serviteur,  
+B A E I N.
+Summary : This image shows a stylized rendering of the lowercase letters "iij" in a bold, italic serif font, with each letter "i" and "j" having a distinct dot above it.
+
+logo:
+  Scene Overview :
+    • The main content consists of the lowercase letters "iij" in bold, italicized, serif typeface.
+    • Each letter "i" and "j" has a separate dot above it, for a total of three dots.
+    • The letters are black on a white background.
+  Technical Details :
+    • No additional text, symbols, or graphical elements are present.
+    • No company name, tagline, or other identifying marks are visible.
+    • The image is tightly cropped around the letters.
+  Spatial Relationships :
+    • The letters are arranged in a left-to-right sequence with even spacing.
+    • All three dots are vertically aligned above their respective stems.
+  Analysis :
+    • The design emphasizes the repetition of the dot motif, possibly for visual identity or branding purposes.
+A P P R O B A T I O N.
+J'AI lu, par ordre de Monseigneur le
+Garde des Sceaux, un Manuscrit, qui a
+pour titre : *L'Art de guérir les Hernies ou
+Descentes*, par M. BALIN : je n'y ai rien
+trouvé de contraire à la permission de
+l'imprimer.
+A Paris, le 14 Août 1778.
+LOUIS, Censeur Royal.
+*PRIVILEGE  GÉNÉRAL.*
+LOUIS, PAR LA GRACE DE DIEU ;
+ROI DE FRANCE ET DE NAVARRE : À
+nos amés & féaux Conseillers , les Gens
+tenans nos Cours de Parlement , Maîtres des
+Requêtes ordinaires de notre Hôtel , Grand-
+Conseil , Prevôt de Paris , Baillifs , Sénéchaux ,
+leurs Lieutenans Civils , & autres nos Justiciers
+qu'il appartiendra. SALUT : Notre amé , le
+sieur BALIN, Chirurgien-Herniaire , Nous a fait
+exposer qu'il désiroit faire imprimer & donner au
+Public, L'Art de guérir les Hernies ou Descentes,
+de sa composition , s'il Nous plaisoit lui accorder
+nos Lettres de Privilége à ce nécessaires.
+A  C E S   C A U S E S ,  voulant favorablement
+traiter l'Exposant , Nous lui avons permis
+& permettons de faire imprimer ledit Ouvrage
+autant de fois que bon lui semblera , & de
+le vendre, faire vendre par tout notre Royaume.
+Voulons qu'il jouisse de l'effet du présent Pri-
+vilége, pour lui & ses hoirs, à perpétuité,
+pourvu qu'il ne le rétrocède à personne ; &
+si cependant il jugeoît à propos d'en faire une
+cession, l'Acte qui la contiendra sera enregistré
+en la Chambre Syndicale de Paris, à peine de
+nullité, tant du Privilége que de la cession, &
+alors par le fait seul de la cession enregistrée,
+la durée du présent Privilége sera réduite à celle
+de l'Exposant, ou à celle de dix années à
+compter de ce jour, si l'Exposant décède avant
+l'expiration desdites dix années. Le tout con-
+formément aux articles IV & V de l'Arrêt
+du Conseil du 30 Août 1777, portant Régle-
+ment sur la durée des Priviléges en Librairie.
+Faisons défenses à tous Imprimeurs, Libraires
+& autres personnes, de quelque qualité &
+condition qu'elles soient, d'en introduire d'im-
+pression étrangere, dans aucun lieu de notre
+obéissance ; comme aussi d'imprimer ou faire
+imprimer, vendre, faire vendre, débiter ni
+contrefaire ledit Ouvrage sous quelque prétexte
+que ce puisse être, sans la permission expresse
+& par écrit dudit Exposant, ou de celui qui
+le représentera, à peine de saisie & de con-
+fiscation des exemplaires contrefaits de six
+mille livres d'amende, qui ne pourra être mo-
+dérée, pour la premiere fois, de pareille amende
+& de déchéance d'état en cas de récidive, &
+de tous dépens, dommages & intérêts, con
+formément à l’Arrêt du Conseil du 30 Août 1777,
+concernant les Contrefaçons. A la charge que
+ces Présentes seront enregistrées tout au long
+sur le Registre de la Communauté des Im-
+primeurs & Libraires de Paris, dans trois
+mois de la date d’icelles; que l’impression
+dudit Ouvrage sera faite dans notre Royaume,
+& non ailleurs, en beau papier & beaux
+caractères, conformément aux Réglemens de
+la Librairie, à peine de déchéance du présent
+Privilège; qu’avant que de l’exposer en vente,
+le manuscrit qui aura servi de copie à l’im-
+pression dudit Ouvrage sera remis dans le même
+état où l’Approbation y aura été donnée ès-
+mains de notre très-cher & féal Chevalier,
+Garde des Sceaux de France, le sieur HUE
+DE MIROMENIL, Commandeur de nos
+Ordres; qu’il en sera ensuite remis deux exem-
+plaires dans notre Bibliotheque publique, un dans
+celle de notre Château du Louvre, un dans
+celle de notre très-cher & Féal Chevalier,
+Chancelier le sieur DE MEAUPEOU, & un
+dans celle dudit sieur HUE DE MIROMENIL.
+Le tout à peine de nullité des Présentes; du
+contenu desquelles vous mandons & enjoignons
+de faire jouir ledit Exposant & ses hoirs pleine-
+ment & paisiblement, sans souffrir qu’il leur
+soit fait aucun trouble ni empêchement.
+VOULONS que la copie des Présentes, qui
+sera imprimée tout au long au commencement
+ou à la fin dudit Ouvrage, soit tenue pour
+dument signifiée, & qu’aux copies collationnées
+par l’un de nos amés & féaux Conseillers-Se-
+crétaires, foi soit ajoutée comme à l’original.
+COMMANDONS au premier notre Huissier
+vj  
+ce requis, de faire pour l’exécution d’icelles,  
+tous Actes requis & nécessaires, sans demander  
+autre permission; & nonobstant clameur de  
+Haro, Charte Normande, & Lettres à ce  
+contraires. Car tel est notre plaisir. Donné à  
+Paris, le dixieme jour du mois de Septembre,  
+l’an mil sept cent quatre-vingt-trois, & de  
+notre regne le dixieme.
+Par le Roi, en son Conseil. LEBEGUE.
+Regisſré ſur le Regiſtre XXI de la Cham-
+bre Royale & Syndicale des Libraires & Im-
+primeurs de Paris, n.o 3040, folio 942;
+conformément aux diſpoſitions énoncées dans
+le préſent Privilege, & à la charge de
+remettre à ladite Chambre les huit Exem-
+plaires preſcrits par l’Article CVIII du Réglement
+de 1723. A Paris, ce 28 Septembre 1783.
+LECLERC, Syndic.
+T A B L E
+
+D E S   C H A P I T R E S
+
+C O N T E N U S  D A N S  C E  V O L U M E.
+OBSERVATIONS anatomiques sur les Hernies,  
+page 1  
+CHAPITRE I. Des Hernies en général, 61  
+CHAP. II. Hernies des espaces triangulaires, ou autrement appellées Hernies de l'estomac, 101  
+CHAP. III. De l'æomphale, ou Hernie ombilicale, 108  
+CHAP. IV. Hernies ventrales; 133  
+CHAP. V. Hernies de l'aine, ou bubonocele, 145  
+CHAP. VI. De l'Hernie crurale, 185  
+CHAP. VII. De l'Hernie du trou ovale, 193  
+CHAP. VIII. Hernies vaginales, 200  
+CHAP. IX. Des Descentes de matrice & du vagin, 210  
+CHAP. X. Des Hernies du périnée, 241  
+CHAP. XI. De la chûte du fondement, 249  
+CHAP. XII. Des Hernies des lombes & des échancrures ischiatiques, 261
+viij      T  A  B  L  E.
+
+Chap. XIII. De l'Hydrocelle.                265
+Chap. XIV. Des difformités des jambes & des
+  pieds des enfans, & les moyens de les répa-
+  rer,                                                    281
+Chap. XV. De la maniere de prendre la me-
+  sure des Bandages,                              282
+Chap. XVI. De l'application des Banda-
+  ges,                                                    293
+Vocabulaire des termes de l'Art dont on a
+  été obligé de se servir dans ce Traité.
+Fin de la Table.
+Summary : This is a black-and-white illustration of a decorative floral motif, featuring a central ribbon or bow surrounded by stylized flowers and leaves.
+
+illustration:
+Scene Overview :
+  • The main subject is a central ribbon or bow, depicted with shading and curved lines to suggest fabric texture.
+  • Surrounding the ribbon are multiple stylized flowers and leafy branches, extending outward symmetrically to the left and right.
+  • The composition is dense and compact, with floral elements filling the space around the central motif.
+  • The illustration is rendered in a woodcut or engraving style, with bold black lines and areas of solid black shading.
+
+Technical Details :
+  • No scale bar, magnification, or on-image text is present.
+  • The image is monochrome (black on white), typical of historical or vintage print illustrations.
+
+Spatial Relationships :
+  • The ribbon or bow occupies the center of the image, anchoring the composition.
+  • Floral branches extend horizontally from both sides of the ribbon, with additional flowers and leaves filling the lower portion.
+  • The arrangement is roughly symmetrical, with similar floral elements on both sides.
+
+Analysis :
+  • The illustration serves as an ornamental or decorative element, likely intended for embellishing printed materials such as bookplates, chapter headings, or certificates.
+  • The dense, symmetrical arrangement and bold linework are characteristic of traditional woodcut or engraving techniques.
+PREFACE
+Summary : This is a decorative illustration featuring symmetrical leafy branches tied together at the center with a ribbon or band, enclosed within a rectangular border.
+
+illustration:
+Scene Overview :
+  • Central motif consists of two leafy branches crossing and tied together at the center with a ribbon or band.
+  • The branches extend horizontally to both sides, each with multiple leaves and small buds.
+  • The entire design is enclosed within a double-lined rectangular border.
+  • The style is reminiscent of woodcut or engraving, with visible linework and shading.
+
+Technical Details :
+  • No text, scale bar, or numeric information present.
+  • Black-and-white, high-contrast line art.
+
+Spatial Relationships :
+  • Symmetrical composition with the tied center as the focal point.
+  • Branches radiate outward evenly to the left and right.
+
+Analysis :
+  • The image serves as an ornamental divider or embellishment, likely used in historical books or documents to separate sections or add visual interest.
+P R É F A C E.
+L’OUVRAGE que je présente
+au Public n’étoit pas destiné à
+voir le jour. Je ne l’avois dabord
+entrepris que pour mon utilité
+particuliere, dans le dessein de
+rassembler, sous un même point
+de vue, tout ce qui concerne la
+partie de la Chirurgie, que j’ai
+embrassée, à la plus saine doc-
+trine ; j’ai tâche de joindre le
+plus de clarté qu’il m’a été
+possible : je crois avoir réussi,
+& c’est ce qui me fait penser
+à rendre public mon ouvrage.
+Si mon projet n’est pas pleine-
+
+b
+x      P R É F A C E.
+ment rempli, j’aurai au moins,
+en attendant que de plus habiles
+l’exécutent, le double avantage
+& de l’avoir tenté, & peut-être
+de leur en inspirer l’envie. Le
+Public n’y perd rien, & l’Art
+ne peut qu’y gagner.
+J’ai insisté sur les Bandages.
+On n’en trouve que des descrip-
+tions très-superficielles, dans les
+Auteurs anciens qui ont le mieux
+écrit sur les Hernies, tandis
+qu’ils entrent dans les plus mi-
+nutieux détails sur ceux qui con-
+viennent aux autres maladies,
+de manière que les connoissances
+que l’on a depuis plusieurs siècles
+sur ces Brayers ou Bandages des
+Hernies, ne nous ont, pour
+ainsi dire, été transmises, que
+P R É F A C E.     xj
+
+par tradition. Il n’y a pas encore
+un siècle que Deblegny accusoit
+les Chirurgiens de négligence à
+cet égard. On n’a plus le même
+reproche à leur faire, graces à
+l’activité & à la vigilance avec
+lesquelles l’Académie de Chi-
+rurgie se porte sur les objets
+où l’Art montre sa stérilité; elle
+ramasse avec une avidité sage
+& circonspecte les richesses épar-
+ses qui peuvent servir à reculer
+les bornes de l’Art, en frayant
+des routes neuves & faciles à
+la curation des maladies; c’est
+à l’émulation qu’inspire cette
+savante & laborieuse Société;
+que nous devons les progrès
+rapides qu’a fait depuis environ
+trente ans la partie des Hernies...
+
+b 2.
+xij     P R É F A C E.
+
+Auparavant elle étoit dans une
+très-grande disette. Qu’on par-
+coure l’Histoire, on trouve la
+cure de ces infirmités livrée à
+des observations dangereuses,
+mutilatoires & infideles. Il n’y
+est presque point question de
+Bandages; ceux que l’on y ex-
+pose sont si imparfaits que l’on
+n’avoit pas de grands avantages
+à attendre de leur application;
+Celse, qui ne les propose que
+pour les enfans, montre, par la
+maniere dont il en parle, l’opi-
+nion qu’il avoit de leur influence.
+« Si le boyau, dit-il, descend
+» à un enfant avant que d’en
+» venir à l’opération, il est à
+» propos d’essayer le Bandage. »
+A cette intention, l’on fait une
+_P R É F A C E._  xiij  
+bande, au bout de laquelle on  
+coud une pelotte de linge, qui,  
+étant placée sur l’ouverture,  
+s’oppose au passage de l’intestin;  
+on fait, avec le reste de la bande,  
+un circulaire, autour du corps,  
+de maniere que l’intestin étant  
+ainsi contenu, souvent les tuni-  
+ques rapprochées se recollent.
+Depuis cette époque jusqu'à  
+Ambroise Paré, on n'apperçoit  
+pas que l'Art ait fort avancé la  
+perfection des Bandages. Ce  
+grand Chirurgien décrit le point  
+doré, comme une opération  
+encore familiere à la cure des  
+Hernies; aussi la matiere & la  
+forme des Bandages avoient quel-  
+que chose de si défectueux, &  
+de si incommode que l'on ne
+$b\ 3$
+xiv     P R É F A C E.
+
+pouvoit pas faire grand fond
+fur l’application ; on ne favoit
+d’autre moyen de les foutenir
+autour du corps, que le fcapu-
+laire ou l’épantiere dans les Ban-
+dages à deux côtés ; la plaque
+étoit compofée d’une feule pièce
+percée pour le paffage du pénil,
+ce qui ne pouvoit manquer de
+la rendre inégale, peu exacte,
+& incapable de contenir fûre-
+ment les parties. Malgré les dé-
+fauts de ces Bandages, ils ne
+laiffoient pas d’opérer quelques
+guérifons. Paré fait mention d’un
+Prêtre de la Paroiffe S. André-
+des-Arcs, attaqué de cette ma-
+ladie, qu’il guérit à l’âge de qua-
+rante ans, par le Bandage &
+fes remèdes. Il parle encore de
+P R É F A C E.      xv
+
+quelques autres guérisons obte-
+nues par l'usage seul du Ban-
+dage, & il en conclut, contre
+les châtreurs de son temps,
+ce que l'on pourroit en conclure
+encore aujourd'hui contre ceux
+du nôtre : qu'il ne faut pas se
+presser de mutiler, comme ils
+font, les jeunes garçons.
+Maintenant, la Chirurgie est
+trop-éclairée pour se permettre
+de semblables mutilations ; elles
+font la honte des hommes, qui,
+dans leur enfance, ont été les
+victimes malheureuses de l’aveu-
+gle crédulité de leurs parens; c’est
+peut-être de là, pour le dire en
+passant, que dérivent la dissimula-
+tion & le profond secret dans les-
+quels se cachent les personnes affli-
+$ b^4 $
+xwj   P R É F A C E.
+gées de cette fâcheuse infirmité.
+Heureusement ils peuvent trou-
+ver, dans les lumieres de la Chi-
+rurgie moderne, de quoi bannir
+leurs allarmes fausses ou réelles ;
+elle saura, sinon guérir leurs
+maux, au moins les soulager, sans
+les dépouiller des marques pré-
+cieuses de leur virilité.
+Pigray, disciple de Paré, fait
+voir, par des exemples frappans
+de morts inopinées, les dangers
+de la plupart de ces opérations,
+qu’il tend à proscrire, à l’exemple
+de son illustre Maître; cepen-
+dant il regarde encore les Ban-
+dages comme des moyens qu’il
+réserve aux jeunes enfans; car
+bien qu’il les conseille pour les
+adultes, il ne paroît pas en
+attendre grand succès.
+P R E F A C E.  xvij
+
+Du temps de Fabrice d'Aqua-
+pendente, on commençoit à se
+servir de différentes matieres,
+pour la composition des Ban-
+dages, & même du fer dont nous
+nous servons aujourd'hui, comme
+on peut s'en convaincre par la
+lecture de ses opérations Chi-
+rurgicales : "Si la dilatation est
+considérable, dit cet excellent
+Auteur, on y remédie par les
+médicamens & par le brayer,
+lequel se fait ou de linge plié,
+ou de bois, ou de fer." Il
+paroit qu'il avoit plus de foi
+que nous aux topiques; car il
+ajoute: "Toutes ces opérations
+sont bien sûres, & souvent con-
+glutinent les parties", pourvu
+que, sous le pelotton, ou le
+xviij  P R É F A C E.
+
+couſſinet , on mette un cérat
+aſtringent qu’il décrit.
+
+Ces Bandages n’étoient pas
+parvenus au degré de perfection
+où ils ſont aujourd’hui ; ils ne laiſ-
+ſoient pas de procurer les avanta-
+ges les plus brillans , à l’aide des
+remedes & des topiques, que nous
+négligeons peut-être trop. Le
+même Auteur rapporte une anec-
+dote bien propre à confirmer ce
+que j’avance : Un Chirurgien de
+ſon temps , qu’il nomme Horace
+de Norſie , Opérateur très-expert
+dans cette partie , faiſoit, chaque
+année , l’opération ſur plus de
+deux cents malades. Dès qu’il eût
+commencé à employer les Banda-
+ges & les Médicamens , il ne la
+faiſoit pas ſur vingt , parce
+P R É F A C E.      xix
+
+que, ajoute-t-il, ils guérissoient
+par ces moyens. On voit, par ce
+détail, l'empire du préjugé, &
+les difficultés que l'on a eu a
+reconnoître, d'une maniere effi-
+cace, l'inutilité & la cruauté
+de la plupart des opérations
+qu'on tentoit alors pour la gué-
+rison de cette maladie si fréquente.
+C'est le succès que l'on obtient
+des Bandages, qui acheva de
+défiller les yeux, & de proscrire
+Les deux Lequin ont mis en
+vogue les Bandages de fil de fer,
+& ils avoient sur les Bandages,
+connus jusqu’alors, des avan-
+tages au moins apparens ; c’étoit
+de se mieux mouler aux différentes
+formes du corps, d’avoir plus
+xx      P R É F A C E.
+d’élasticité que le fer ; mais ,
+comme ces avantages ne se sou-
+tenoient pas long-tems, & qu’on
+ne pouvoit compter que pour
+quelques jours sur l’effet de ces
+machines, on ne tarda pas à
+s’en dégoûter.
+Deblegny, qui parut vers le
+même-tems, mit les premiers dans
+le discrédit, par les Bandages d’a-
+cier battu à froid qu’il prôna,
+avec Enthousiasme. Il recom-
+mande quelquefois les Ban-
+dages de fil de fer, peut-être
+pour s’accoutumer au goût du
+public, qui n’en étoit pas en-
+core bien désabusé. Ce qu’il y
+a de certain, c’est que l’acier
+battu à froid, a une élasticité
+plus durable, & un point d’ap-
+P R É F A C E.      xxji
+pui plus ſolide que le fil de fer.
+Cependant, à la longue, il perd
+comme ce dernier, ces qualités,,
+& n’a jamais la ſolidité conſtante
+des lames compoſées de fer &
+d’acier bien trempé. Delaunay,
+Chirurgien Herniaire, fut l’in-
+venteur de pluſieurs Bandages
+qui ne ſont pas tous d’un
+égal mérite. Son Bandage d’a-
+cier à vis, n’eſt pas à mépriser
+pour les perſonnes graſſes, dont:
+les Hernies ſont difficiles à con-
+tenir, ou qui ne peuvent ſup-
+porter les ſous-cuiffes. Il donne
+plus que les autres, la facilité de
+graduer la preſſion convenable-
+ment. Il eſt vrai que ſi le pas de,
+la vis ſ’uſe, ce qui arrive plutôt ou
+plus tard, il perd cet avantage;
+mais qu’eſt-ce que le tems na-
+xxij  P R É F A C E.
+détruit pas? Un autre défaut
+c'est de laisser échapper les parties
+supérieurement, tandis qu'il
+comprime trop bas : mais ce dé-
+faut n'est pas irréparable.
+Le Bandage à charniere, de son
+invention, qu'il vante pour la
+commodité du transport dans les
+voyages, offre autant de volume,
+& plus de pesanteur que les Ban-
+dages ordinaires, & n'a pas la
+même sûreté dans l'application.
+Ce n'est donc pas sans raison
+que l'on en a prescrit l'usage.
+On trouve encore, du même Au-
+teur, un autre Bandage à cercle
+d'acier, à ressort, que l'Acadé-
+mie de Chirurgie a honoré de son
+approbation : ce Bandage de-
+vient propre aux deux côtés ;
+P R É F A C E. xxiiʲ.
+
+par le moyen d’une ſeconde pla-
+tine, dont la queue paſſe dans la
+premiere, & ſe fixe à telle diſ-
+tance, qu’il convient pour porter
+ſur l’un & l’autre anneau. Cette
+platine eſt arrêtée par une vis
+qui rentre & reſte dans l’écrou
+pratiqué à la premiere platine,
+pour former le Bandage à deux
+côtés. Ce Bandage, conſidéré
+comme ſimple, eſt excellent : ce-
+pendant, par rapport à l’étoffe,
+je préfererois un mélange de fer
+& d’acier, qui eſt d’une élaſti-
+cité plus ſolide & plus durable.
+Je ne vois pas ce que l’on gagne
+à rendre ce Bandage propre aux
+deux côtés par le moyen qu’on
+vient d’expoſer. On ne peut re-
+garder comme un avantage dans
+xxiv  P R É F A C E.
+
+un même sujet, cette facilité de
+rapprocher ou de reculer les pe-
+lottes à son gré, puisque les ou-
+vertures gardent constamment
+le même siège ; à quoi bon ren-
+dre amovible les pelottes qui les
+recouvrent ? A moins qu’on ne
+veuille étendre leur usage à plu-
+sieurs sujets, ce qui peut deve-
+nir utile dans les magasins que
+l’on est obligé de faire pour les
+hôpitaux ou les insulaires, qui
+ne sont pas à portée des Chi-
+rurgiens Herniaires : mais ce
+qui l’emporte, dans le plus grand
+nombre des cas, sur cette inven-
+tion, c’est le Bandage vulgaire-
+ment appelé Bandage à demi-
+corps. Il consiste en deux Ban-
+dages fixés postérieurement par
+_P R É F A C E._  xxv
+
+une boucle : nous nous étendrons
+ailleurs sur son utilité. Il y a bien
+des années que ce Bandage est
+connu ; je ne sais à quel titre
+un Auteur moderne s’en attri-
+bue l’invention.
+Berenger publia, vers le même-
+tems, un traité des Hernies, qui
+sent un peu le charlatanisme. Il
+préconise ses Bandages, qu’il ne
+décrit pas; il élève au-dessus de
+tous les remèdes communs, ses Pa-
+nacées, Elixirs, Baumes, Em-
+plâtres, & un magasin d’autres
+mystérieuses recettes de cette
+nature; de sorte qu’on ne voit
+pas si les Bandages lui doivent
+quelque perfection réelle.
+
+Feu M. Suret a inventé pour
+l’Exomphale un nouveau Ban
+xxvj  P R É F A C E.
+
+dage fort ingénieux, & qui, par
+le moyen d’un ressort de mon-
+tre qui se trouve logé entre
+deux plaques, prête merveilleu-
+sement aux mouvemens d’inspi-
+rations, & à toutes les atti-
+tudes que peut prendre le corps
+successivement. On regarde ce
+Bandage comme un chef d’œu-
+vre digne de la Chirurgie mo-
+derne; aussi l’Académie de Chi-
+rurgie l’a-t-elle honoré d’une ap-
+probation distinguée. M. Suret
+ajoute, qu’il a employé ce Ban-
+dage avec le même succès: mais
+avec des modifications différentes
+(bien entendu) pour contenir
+des paquets d’hémorroïdes.
+
+Cette perfection dans les Ban-
+dages, & les différens changemens
+P R É F A C E. xxv;
+
+qu'est à même de faire un Chi-
+rurgien éclairé sur la nature des
+parties, & ingénieux dans ses
+recherches, devroient opérer des
+guérisons journalières. Et peut-
+être seroient-elles plus commu-
+nes, s'il on négligeoit moins les
+moyens que les anciens joig-
+noient avec fruit à leurs connois-
+tifs, tous imparfaits qu'ils étoient.
+Je conviens que l'application
+de ces moyens n'est pas toujours
+proposable.
+Les Médicamens ne sont pas  
+toujours utiles : souvent la cure  
+palliative est la seule qu’on doî-  
+ve raisonnablement tenter ; &  
+lors même que les Médicamens  
+sont indiqués, ils peuvent deve-  
+nir dangereux de mille manières
+Summary : This image shows two bold, italicized characters, "c" and "2", rendered in a stylized font, likely as part of a mathematical or scientific notation.
+
+logo:  
+Characters & Style : 
+  • The image contains the lowercase letter "c" followed by the numeral "2".
+  • Both characters are bold and italicized, with a handwritten or calligraphic appearance.
+  • The characters are black on a white background, with no additional symbols, borders, or graphical elements.
+  • There is a noticeable space between the "c" and the "2".
+
+Dimensions & Placement : 
+  • The characters are horizontally aligned, with "c" on the left and "2" on the right.
+  • The image is tightly cropped around the characters.
+
+Analysis : 
+  • The stylized "c 2" may represent a variable with a subscript, a label, or a mathematical constant, but no further context is provided in the image itself.
+xxviij  P R É F A C E.
+entre les mais des Chirurgiens
+qui les prostituent, si j’ose me
+servir de ce terme.
+Les Bandages que je vois dé-
+biter tous les jours par des bour-
+siers ou autres faiseurs de cette
+trempe, ont souvent le même
+sort. A quels périls ne s’expo-
+sent pas les malades, qui prodi-
+guent leur confiance à des gens
+que l’on peut taxer d’ignorance :
+car c’est manquer de connois-
+sance, d’humanité, que de
+vouloir guérir des maux qu’on
+ne connoît pas. Moins on voit
+de dangers, plus on en court.
+Aussi n’est-il pas rare de voir
+leurs machines fomenter les
+maux des malades qui les por-
+tent, & au lieu de les prévenir,
+P R É F A C E. xxix
+
+les rendre souvent incurables.
+
+ou mortels.
+Ce qui décèle dans ces ouvriers  
+l'impéritie la plus grossière, c'est  
+que j'ai vu des brayers appli-  
+qués par eux sur des bubons.  
+Y a-t-il erreur moins excusable ?  
+En supposant qu'ils eussent pris  
+la tumeur pour une Descente,  
+pouvoient-ils raisonnablement se  
+permettre l'application d'un Ban-  
+dage, sans auparavant avoir  
+rendu les parties à l'ordre natu-  
+rel ? Quels avantages, sans cette  
+précaution, avoient-ils à atten-  
+dre de leur manœuvre ?
+Tous les Bandages peuvent  
+être utiles, j’en conviens: & l’ex-  
+périence m’a appris qu’il n’y  
+en a pas tant à rejettter que l’on
+xxx.  P R É F A C E.
+croit de l’arsenal de Chirurgie. J’ai
+vu quelques-unes de ces machines,
+dont la proscription est générale,
+remplie parfaitement des indica-
+tions auxquelles d’autres plus es-
+timés, & plus estimables en effet
+n’avoient su satisfaire : c’est pour
+cela même que leur choix de-
+mande plus de savoir & d’intel-
+ligence. Les ignorans sont les
+meilleurs remèdes ! autant de
+poisons qui tuent infailliblement
+les personnes assez téméraires
+pour s’y livrer : à l’ombre d’une
+routine quelquefois heureuse &
+toujours aveugle, ils affrontent
+intrépidement tous les dangers,
+& finissent par faire autant de
+chûtes que de pas.
+
+On a vu dans cette esquisse
+P R É F A C E xxxj
+légere quels progrès a fait la
+Chirurgie des Bandages, depuis
+environ cinquante ans. On verra,
+j'espère, par la lecture de cet ou-
+vrage, ce qu'elle a gagné du
+côté de la doctrine dans ces
+maladies.
+Il est tems de dire un mot du
+plan que j'ai suivi dans ce traité.
+La plupart des Auteurs qui ont
+écrit des Hernies, les ont ran-
+gées selon la nature des parties
+échappées. Cette distribution m'a
+paru vicieuse, en ce que le plus
+souvent on ne reconnoît quelles
+sont ces parties, que par l'opé-
+ration, ou après la mort, & 
+que l'on n'a, le plus ordinaire-
+ment, pendant la vie, que des
+probabilités à cet égard. Au
+xxxij  P R É F A C E.
+reste, demande-t-on quelle est la
+partie sortie? la premiere question
+tombe d'abord sur le siège de
+l'Hernie. C'est pour suivre cet
+ordre, qui m'a paru si simple & si
+naturel, que j'ai cru devoir dé-
+terminer leur genre par le lieu
+qu'elles occupent, & tirer leurs
+espèces de la nature des parties
+comprises dans la tumeur.
+J'ai cru devoir ajouter à ce
+Traité, un Chapitre sur l'Hydrocele, maladie très-commune
+dans les enfans, ainsi que dans
+les adultes, suivi d'un formulaire
+que j'ai toujours employé avec
+succès dans cette maladie.
+Summary : This image shows a black-and-white symmetrical inkblot with abstract shapes, reminiscent of a Rorschach test pattern.
+
+illustration:
+Scene Overview :
+  • Central symmetrical inkblot with mirrored left and right sides.
+  • The main shape resembles a stylized flower, butterfly, or ornate motif, with two upward-curving "arms" and a rounded central area.
+  • The image is black on a white background, with no text or additional markings.
+
+Technical Details :
+  • No scale bar, magnification, or annotation present.
+  • High-contrast, solid black ink shapes with no shading or gradient.
+
+Spatial Relationships :
+  • The composition is horizontally symmetrical.
+  • The central motif is flanked by two mirrored shapes on either side, with a smaller shape below the main figure.
+
+Analysis :
+  • The image is abstract and open to interpretation, with no explicit subject or data.
+  • The symmetry and organic curves may evoke associations with psychological inkblot tests or decorative motifs.
+Summary : This image shows a heavily degraded or low-quality scan of text or symbols, with two main lines of content, possibly alphanumeric, but much of the detail is obscured by noise and missing segments.
+
+logo:  
+Main Elements :  
+  • Top line appears to contain the characters “2 0 4 3” or similar, but some digits are partially illegible.  
+  • Bottom line contains “U A” or similar, with the “A” being more distinct than the “U”.  
+  • Black ink on a white background, with significant speckling and missing portions.  
+  • No visible graphic elements, border, or additional design features.  
+  • No company name, tagline, or other identifying marks are legible.  
+  • No clear dimensions or placement cues due to the crop and noise.
+
+Analysis :  
+  • The mark is too degraded to convey any clear brand or message. The legible portions suggest it may be a code, identifier, or simple text rather than a complex logo.
+L’ART
+Summary : This is a decorative illustration featuring a central rural house within a circular frame, flanked by floral motifs, all enclosed in a rectangular border.
+
+illustration:
+Scene Overview :
+  • Central subject is a small house or barn with a pitched roof, chimney, and a fence, depicted in a simple line-drawing style.
+  • The house is enclosed within a circular frame or wreath.
+  • On both the left and right sides of the circle are stylized floral arrangements, likely roses, with leaves and stems.
+  • The entire composition is contained within a rectangular border with a patterned, cross-hatched design.
+
+Technical Details :
+  • No text, scale bar, or numeric information is present.
+  • The illustration is monochrome (black and white), with line shading for texture.
+  • The style suggests a woodcut or engraving, possibly from a historical or vintage publication.
+
+Spatial Relationships :
+  • The house is centered within the circle, which itself is centered in the rectangle.
+  • Floral motifs are symmetrically placed on either side of the central circle.
+  • The border frames the entire composition, with thicker corners and patterned edges.
+
+Analysis :
+  • The image serves as an ornamental or decorative element, possibly as a chapter heading, vignette, or divider in a book.
+  • The symmetrical arrangement and rural subject evoke a sense of pastoral calm and traditional aesthetics.
+L'  A  R  T
+
+   DE GUÉRIR
+
+LES HERNIES
+
+      OU
+
+  DESCENTES.
+OBSERVATIONS
+
+ANATOMIQUES
+
+SUR LES HERNIES.
+Les Anatomistes sont dans l'usage de
+diviser le corps humain en tête ; en
+tronc & en extrémités. Le tronc com-
+prend la poitrine & le bas-ventre.
+A
+2
+L’Art de guérir
+Cette derniere cavité est le théâtre
+ordinaire des maladies que nous nous
+proposons de traiter ; & c’est aussi de
+sa description que nous allons nous oc-
+cuper.
+On entend par le bas-ventre, toute  
+cette grande cavité qui s’étend depuis  
+le diaphragme jusqu’au fond du bassin  
+des os innominés.
+La partie antérieure de cette capacité
+n'est composée que de parties molles,
+ce qui la rend plus extensible & plus
+mobile. La partie postérieure est soutenue par plusieurs os posés les uns sur
+les autres, & articulés entr'eux. Ces os
+sont appellés _vertebres_ ; & leur base
+est appuyée sur un os pyramidal, dont
+la pointe est en bas; il se nomme _os
+sacrum_. Les parties latérales sont, en
+partie, osseuses, en-haut par les fausses
+côtes, & en-bas par les os innominés.
+
+La ligne centrale du ventre se partage en trois régions, qui sont, la supé-
+les Hernies ou Descentes.  3.
+rieure ou épigastriques, la moyenne ou
+ombilicale, l'inférieure ou hypogastri-
+que ; & postérieurement ces régions
+n'en font qu'une, connue sous le nom
+de région lombaire.
+La région épigastrique commence au
+creux de l'estomac, sous la pointe du
+cartilage xiphoïde, & se termine au-
+dessus du nombril, vis-à-vis l'extrémi-
+té de la derniere fausse côte de chaque
+côté. Cette région est subdivisée en
+trois parties. La moyenne est nommée
+_épigastre_, & les deux latérales _hypo-
+condres_ ; l'épigastre est l'intervalle que
+laissent les fausses côtes antérieurement;
+& les hypocondres sont les espaces que
+couvrent latéralement les fausses côtes.
+La région ombilicale s’étend depuis
+les fausses côtes jusqu’à la crête de l’os
+des îles. Cette région se subdivise en-
+core en trois autres ; savoir, en ombi-
+lic proprement dit, & en régions ilia-
+ques, droite & gauche. La région hy-
+A 2.
+4        *L'Art de guérir*
+pograftrique comprend l'espace qui se
+rencontre depuis le point inférieur de
+la région ombilicale jusqu'en-bas. Elle
+est encore divisée en trois parties, qui
+sont, une moyenne appelée *pubis*,
+& deux latérales nommées les *aînes*.
+La région lombaire, qui est la partie
+postérieure du bas-ventre, s'étend de-
+puis la derniere vertèbre dorsale &
+les dernieres vraies côtes de chaque
+côté jusqu'à l'os *sacrum*. Les parties
+voisines de la crete de l'os des îles la-
+téralement sont les lombes, & la partie
+moyenne est ce que dans les animaux
+on appelle le *rible*.
+La partie inférieure du *pubis* est an-
+térieurement terminée par les parties
+naturelles dans l’un & l’autre sexe, &
+postérieurement par les fesses & par
+l’*anus*, vulgairement appellé le *siége*
+ou le *fondement*.
+nus & les parties naturelles, prend le
+les Hernies ou Descentes.  5
+nom de périné. Il est séparé en deux
+portions latérales par une ligne saillan-
+te appelée raphé, qui a plus d'éten-
+due dans l'homme que dans la femme.
+Le ventre présente ordinairement une
+convexité ovale plus ou moins voûtée,
+selon l'embonpoint du sujet, selon la
+plénitude ou la vacuité de l'estomac,
+& les différens états non naturels, ou
+contre-nature auxquels il eſt expoſé.  
+Il eſt bon d’obſerver que les régions  
+ombilicales & hypogaſtriques ſont plus  
+ſuſceptibles de variété que l’épigaſtri-  
+que.
+Le ventre se rétrécit de chaque côté  
+entre l’hypocondre & la hanche. La ré-  
+gion lombaire se courbe plus ou moins &  
+forme un enfoncement plus ou moins  
+considérable : cet enfoncement, ainsi  
+que la convexité antérieure sont plus  
+marqués, lorsque l’on est à genoux  
+ou debout, que dans toute autre situa-  
+tion. La raison, c’est qu’alors l’extré,
+$A^3$
+6        L’Art de guérir
+mité inférieure de l’os sacrum est plus
+reculée, & l’os pubis abaissé dans un
+degré proportionnel : ces deux attitudes
+favorisent la chute des intestins en de-
+vant, c’est pourquoi les Herniſtes doi-
+vent les éviter. Les autres variétés qui
+dépendent de différentes ſituations,
+ſont moins remarquables.
+Je me borne à ces simples observa-
+tions ; des détails plus approfondis fe-
+roient des volumes.
+Le bas-ventre est composé de deux
+sortes de parties, que l’on distingue en
+externes ou contenantes, en internes ou
+contenues. Les premieres sont commu-
+nes ou propres. Les parties contenan-
+tes communes sont, l’épiderme, la peau
+la graisse, &c. Elles sont ainsi appelées,
+parce qu’elles enveloppent tout le corps.
+On met au nombre des parties conte-
+nantes propres & particulieres au bas-
+ventre, les os, les membranes, les
+muscles, &c.
+les Hernies ou Descentes
+Les parties contenues dans la capa-
+cité du bas-ventre, sont le foie, la vés-
+sicule du fiel, la rate, le ventricule, les
+intestins le mésentere, le pancréas,
+les reins, les ureteres, la vessie, une
+partie des gros vaisseaux, les nerfs &
+les parties internes de la génération des
+deux sexes.
+Des parties contenantes.
+Nous ne nous arrêterons point à dé-
+crire les os, nous en supposons la con-
+noissance à nos lecteurs; au reste, ils
+peuvent consulter les Livres anatomi-
+ques. Je me contente ici d’exposer les
+parties qui offrent des observations par-
+ticulières & relatives aux maladies dont
+je parlerai dans le cours de ce traité.
+Nous avons dit que les tégumens
+communs font composés de trois par-
+ties ; savoir, l’épiderme, la peau & la
+graisse.
+A  4
+8   L’Art de guérir
+L’épiderme, qu’on appelle encore la  
+_cuticule_ ou la _surpeau_, est une pellicule  
+mince & transparente, qui recouvre la  
+peau à laquelle elle est fortement atta-  
+chée. On croit qu’elle est écailleuse;  
+mais cette structure n’est pas encore dé-  
+montrée: tout ce que l’on sait, c’est  
+que l’eau bouillante, les vésicatoires,  
+un frottement répété la détachent & la  
+font élever en maniere de vessie. M.  
+Morgagni prétend qu’elle n’est autre  
+chose que la superficie de la peau en-  
+durcie par l’action de l’air exterieur.  
+Mais si cela étoit, le fœtus, qui n’a pas  
+encore été exposé à son action, n’au-  
+roit point d’épiderme; ce qui est dé-
+Il est plus vraisemblable qu'elle doit
+sa naissance à l'expansion respective des
+papilles nerveuses & des tuyaux excre-
+toires. Ce qui paroit étayer cette con-
+jecture, c'est que Swammerdam dit
+avoir découvert, par l'injection, des vais
+les Hernies ou Descentes.
+feaux sanguins dans l’épiderme du fœ-
+tus. Entre les différens usages de l’é-
+piderm, les plus remarquables, sont 1.° 
+de modifier l’attouchement des corps
+tactiles sur les houppes nerveuses de la
+peau ; 2.° d’empêcher l’effusion des li-
+queurs par l’extrémité des vaisseaux qui
+s’y terminent ; 3.° de donner passage
+aux évacuations cutanées & aux corpus-
+cules, médicamenteux qu’on y appli-
+que, &c.
+La cuticule étant détruite, se pré-
+sente la peau, qui est un tissu merveil-
+leux de fibres membraneuses, tendineu-
+ses, nerveuses & vasculaires; c'est la
+complication de cette structure qui l'a
+fait comparer par M. Winslow à l'étoffe
+d'un chapeau. Sur la surface de ce lacs
+vasculaire, s'élève une infinité de peti-
+tes pyramides, formées par les extré-
+mités des fibres nerveuses. On les a ap-
+pellées, *mamelons*, ou, *houpes ner-
+veuses*. Elles sont l'organe de la sensa
+L’Art de guérir
+tion du toucher dans toute l’étendue
+du corps. Leur arrangement, leur quan-
+tité, leur figure, varient selon les dif-
+férentes parties; par exemple, elles sont
+moins marquées au ventre qu’ailleurs.
+Ces papilles ou éminences nerveuses
+sont engagées dans les ouvertures d’une
+membrane, qu’on a, pour cette raison,
+appelée réticulaire. Sa structure n’est pas
+encore bien développée; car on doute
+si cette membrane appartient à l’épi-
+derme; ou aux mamelons, ou si elle
+compose elle-même une membrane par-
+ticulière. Ce que l’on sait, c’est que
+ces mamelons nerveux, après avoir
+traversé son épaisseur, vont se perdre
+dans l’épiderme par une infinité de fi-
+bres très-fines & très-déliées.
+Malgré la forte adhérence de l'épi-
+derme à la peau, on ne laisse pas de dé-
+couvrir entr'eux une substance mucila-
+gineuse, qui a pris le nom de _corps
+muqueux_. On le croit le siège de la

@@ -5,7 +5,7 @@ var __export = (target, all) => {
 };
 
 // src/index.ts
-import { logger as logger16 } from "@elizaos/core";
+import { logger as logger19 } from "@elizaos/core";
 
 // src/actions/dkgInsert.ts
 import dotenv from "dotenv";
@@ -24,26 +24,7 @@ import DKG from "dkg.js";
 
 // src/services/kaService/kaService.ts
 import "dotenv/config";
-
-// src/services/kaService/anthropicClient.ts
-import "dotenv/config";
-import { Anthropic } from "@anthropic-ai/sdk";
-var apiKey = process.env.ANTHROPIC_API_KEY;
-function getClient() {
-  return new Anthropic({ apiKey });
-}
-async function generateResponse(client, prompt, model = "claude-3-5-sonnet-20241022", maxTokens = 1500) {
-  const response = await client.messages.create({
-    model,
-    max_tokens: maxTokens,
-    messages: [{ role: "user", content: prompt }]
-  });
-  if (response.content && response.content.length > 0 && response.content[0].type === "text") {
-    return response.content[0].text;
-  } else {
-    throw new Error("No response received from Claude.");
-  }
-}
+import OpenAI2 from "openai";
 
 // src/services/kaService/downloadPaper.ts
 import { logger } from "@elizaos/core";
@@ -72,30 +53,54 @@ function paperExists(doi) {
 import { logger as logger6 } from "@elizaos/core";
 
 // src/services/kaService/unstructuredPartitioning.ts
-import axios2 from "axios";
-import FormData from "form-data";
+import { LlamaParseReader } from "llamaindex";
 import "dotenv/config";
 import { logger as logger2 } from "@elizaos/core";
-var apiKey2 = process.env.UNSTRUCTURED_API_KEY;
-async function makeUnstructuredApiRequest(fileBytes, filename, apiKey3) {
-  const url = "https://api.unstructuredapp.io/general/v0/general";
-  const formData = new FormData();
-  formData.append("files", fileBytes, filename);
-  formData.append("pdf_infer_table_structure", "true");
-  formData.append("skip_infer_table_types", "[]");
-  formData.append("strategy", "hi_res");
-  const headers = {
-    "unstructured-api-key": apiKey3,
-    ...formData.getHeaders()
-  };
-  logger2.info("Making Unstructured API request");
-  const response = await axios2.post(url, formData, {
-    headers,
-    timeout: 3e5
-    // 300000 ms
+async function makeLlamaIndexParseRequest(filePath, options = {}) {
+  const {
+    maxChunkSize = 2048,
+    // Default chunk size in tokens
+    chunkOverlap = 200,
+    // Default overlap between chunks
+    skipPages = [],
+    // Pages to skip (e.g., references)
+    maxPages = 50
+    // Maximum pages to process
+  } = options;
+  const apiKey2 = process.env.LLAMA_INDEX_API_KEY || process.env.LLAMA_CLOUD_API_KEY;
+  if (!apiKey2) {
+    throw new Error("LlamaIndex API key not found in environment variables");
+  }
+  const reader = new LlamaParseReader({
+    resultType: "markdown",
+    apiKey: apiKey2
   });
-  logger2.info("Got response from Unstructured API");
-  return response.data;
+  try {
+    logger2.info(`Parsing file with LlamaIndex: ${filePath} (max ${maxPages} pages, ${maxChunkSize} tokens per chunk)`);
+    const startTime = Date.now();
+    let documents = [];
+    try {
+      documents = await reader.loadData(filePath);
+    } catch (err) {
+      logger2.error(`LlamaIndex loadData failed: ${err instanceof Error ? err.message : String(err)}`);
+      return [];
+    }
+    documents = documents.filter((doc) => doc && doc.metadata && !skipPages.includes(doc.metadata.page_number)).sort((a, b) => (a.metadata?.page_number || 0) - (b.metadata?.page_number || 0)).slice(0, maxPages).map((doc) => ({
+      ...doc,
+      text: (doc.text || "").replace(/\s+/g, " ").replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim()
+    })).filter((doc) => doc.text && doc.text.length > 0);
+    const processingTime = Date.now() - startTime;
+    logger2.info(`Processed ${documents.length} sections in ${processingTime}ms`);
+    if (documents.length === 0) {
+      logger2.warn("No valid text sections extracted from PDF. Returning empty array.");
+      return [];
+    }
+    return documents;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    logger2.error(`Failed to parse PDF: ${errorMessage}`, { error });
+    throw error;
+  }
 }
 
 // src/services/kaService/exampleForPrompts.ts
@@ -494,13 +499,13 @@ function get_prompt_basic_info(paper_array) {
     7. Identify the page numbers that indicate where the paper is located within the journal.
     8. Identify the DOI (Digital Object Identifier) which provides a persistent link to the paper's online location.
     9. Capture key experimental details such as:
-        OBI_0000299 'has_specified_output': Describe the types of data or results produced by the research.
-        OBI_0000968 'instrument': Specify the instruments or equipment used in the research.
+        OBI_0000299 'has_specified_output': Describe the types of data or results produced by the research or medical treatment or practice.
+        OBI_0000968 'instrument': Specify the instruments or equipment used in the research or treatment.
         OBI_0000293 'has_specified_input': Identify inputs such as samples or data sets utilized in the study.
         OBI_0200000 'data transformation': Explain any computational or analytical methods applied to raw data.
         OBI_0000251 'recruitment status': For clinical studies, provide details on the status of participant recruitment.
         OBI_0000070 'assay': Describe the specific assays used in the study to measure or observe biological, chemical, or physical processes, essential for validating the experimental hypothesis and ensuring reproducibility.
-        IAO_0000616 'conflict of interest': If there's a conflict of interest mentioned in the paper, describe it here.
+        IAO_0000616 'conflict of interest': If there's a conflict of interest mentioned in the paper/treatment, describe it here.
 
     **Example Input (ONLY AN EXAMPLE, DO NOT COPY DATA FROM HERE FOR ACTUAL OUTPUT)**
     ${basic_info_example_input}
@@ -853,6 +858,7 @@ Cerebrum DAO \u2192 Brain health, neurodegeneration, Alzheimer's research
 Curetopia \u2192 Rare disease research, genetic disorders, orphan drug discovery
 Long COVID Labs \u2192 Long COVID, post-viral syndromes, chronic illness research
 Quantum Biology DAO \u2192 Quantum biology, biophysics, quantum effects in biology
+SpineDAO - Spinal health, orthopedic research, AI-assisted clinical hypothesis mining
 </dao_list>
 
 Return your output **only** as a JSON array of DAO names. If no DAOs are relevant, return an empty array.
@@ -862,22 +868,40 @@ Example output format:
 or
 []`;
 
+// src/services/kaService/anthropicClient.ts
+import "dotenv/config";
+import OpenAI from "openai";
+var apiKey = process.env.ANTHROPIC_API_KEY;
+async function generateResponse(client, prompt, model = "gpt-4o", maxTokens = 1500) {
+  let currentPrompt = prompt;
+  const response = await client.chat.completions.create({
+    model,
+    max_tokens: maxTokens,
+    messages: [{ role: "user", content: currentPrompt }]
+  });
+  if (response.choices && response.choices.length > 0 && response.choices[0].message.content) {
+    return response.choices[0].message.content;
+  } else {
+    throw new Error("No response received from OpenAI.");
+  }
+}
+
 // src/services/kaService/biologyApi.ts
 import { logger as logger3 } from "@elizaos/core";
-import axios3 from "axios";
+import axios2 from "axios";
 import "dotenv/config";
 var bioontologyApiKey = process.env.BIONTOLOGY_KEY;
 function extractAtcId(url) {
   const match = url.match(/\/([^/]+)$/);
   return match ? match[1] : null;
 }
-async function searchGo(term, client, modelIdentifier = "claude-3-haiku-20240307") {
+async function searchGo(term, client, modelIdentifier = "gpt-4o") {
   const url = "https://www.ebi.ac.uk/QuickGO/services/ontology/go/search";
   const params = { query: term, limit: 5, page: 1 };
   const headers = { Accept: "application/json" };
   let newTerm = "None";
   try {
-    const apiResponse = await axios3.get(url, {
+    const apiResponse = await axios2.get(url, {
       headers,
       params
     });
@@ -897,7 +921,7 @@ async function searchGo(term, client, modelIdentifier = "claude-3-haiku-20240307
   }
   return newTerm;
 }
-async function searchDoid(term, client, modelIdentifier = "claude-3-haiku-20240307") {
+async function searchDoid(term, client, modelIdentifier = "gpt-4o") {
   const url = "https://www.ebi.ac.uk/ols/api/search";
   const params = {
     q: term,
@@ -906,7 +930,7 @@ async function searchDoid(term, client, modelIdentifier = "claude-3-haiku-202403
   const headers = { Accept: "application/json" };
   let newTerm = "None";
   try {
-    const apiResponse = await axios3.get(url, {
+    const apiResponse = await axios2.get(url, {
       headers,
       params
     });
@@ -932,7 +956,7 @@ async function searchDoid(term, client, modelIdentifier = "claude-3-haiku-202403
   }
   return newTerm;
 }
-async function searchChebi(term, client, modelIdentifier = "claude-3-haiku-20240307") {
+async function searchChebi(term, client, modelIdentifier = "gpt-4o") {
   const url = "https://www.ebi.ac.uk/ols/api/search";
   const params = {
     q: term,
@@ -941,7 +965,7 @@ async function searchChebi(term, client, modelIdentifier = "claude-3-haiku-20240
   const headers = { Accept: "application/json" };
   let newTerm = "None";
   try {
-    const apiResponse = await axios3.get(url, {
+    const apiResponse = await axios2.get(url, {
       headers,
       params
     });
@@ -967,7 +991,7 @@ async function searchChebi(term, client, modelIdentifier = "claude-3-haiku-20240
   }
   return newTerm;
 }
-async function searchAtc(term, client, modelIdentifier = "claude-3-haiku-20240307") {
+async function searchAtc(term, client, modelIdentifier = "gpt-4o") {
   const url = "https://data.bioontology.org/search";
   const params = {
     q: term,
@@ -977,7 +1001,7 @@ async function searchAtc(term, client, modelIdentifier = "claude-3-haiku-2024030
   const headers = { Accept: "application/json" };
   let newTerm = "None";
   try {
-    const apiResponse = await axios3.get(url, {
+    const apiResponse = await axios2.get(url, {
       headers,
       params
     });
@@ -1003,15 +1027,37 @@ async function searchAtc(term, client, modelIdentifier = "claude-3-haiku-2024030
   return newTerm;
 }
 async function updateGoTerms(data, client) {
-  for (const entry of data) {
-    const subjectResult = await searchGo(entry.subject, client);
-    entry.subject = { term: entry.subject, id: subjectResult };
-    const objectResult = await searchGo(entry.object, client);
-    entry.object = { term: entry.object, id: objectResult };
+  if (typeof data === "string") {
+    try {
+      const cleanJson = data.replace(/^```json\n|\n```$/g, "").trim();
+      data = JSON.parse(cleanJson);
+    } catch (e) {
+      logger3.error("Failed to parse GO terms data", e);
+      return [];
+    }
   }
-  return data.filter(
-    (entry) => entry.subject !== "None" && entry.object !== "None"
-  );
+  if (!Array.isArray(data)) {
+    logger3.error("GO terms data is not an array");
+    return [];
+  }
+  const processedEntries = [];
+  for (const entry of data) {
+    try {
+      const subjectResult = await searchGo(entry.subject, client);
+      const objectResult = await searchGo(entry.object, client);
+      if (subjectResult !== "None" && objectResult !== "None") {
+        processedEntries.push({
+          ...entry,
+          subject: { term: entry.subject, id: subjectResult },
+          object: { term: entry.object, id: objectResult }
+        });
+      }
+    } catch (e) {
+      logger3.error(`Error processing GO term entry: ${JSON.stringify(entry)}`, e);
+      continue;
+    }
+  }
+  return processedEntries;
 }
 async function updateDoidTerms(data, client) {
   for (const entry of data) {
@@ -1151,7 +1197,7 @@ async function extractSections(client, paper_array) {
     const answer = await generateResponse(
       client,
       prompt,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     const answerLines = answer.split("\n");
@@ -1209,7 +1255,7 @@ async function getGeneratedCitations(client, paper_dict) {
     const generated_citations = await generateResponse(
       client,
       prompt_citations,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger4.info(`Generated citations from Claude: ${generated_citations}`);
@@ -1233,7 +1279,7 @@ async function getGoGeneratedSubgraphText(client, paper_dict) {
     let generated_subgraph_text = await generateResponse(
       client,
       prompt_subgraph,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger4.info(
@@ -1268,7 +1314,7 @@ async function getDoidGeneratedSubgraphText(client, paper_dict) {
     const generated_subgraph_text = await generateResponse(
       client,
       prompt_subgraph,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger4.info(
@@ -1303,7 +1349,7 @@ async function getChebiGeneratedSubgraphText(client, paper_dict) {
     const generated_subgraph_text = await generateResponse(
       client,
       prompt_subgraph,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger4.info(
@@ -1338,7 +1384,7 @@ async function getAtcGeneratedSubgraphText(client, paper_dict) {
     const generated_subgraph_text = await generateResponse(
       client,
       prompt_subgraph,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger4.info(
@@ -1399,7 +1445,7 @@ async function get_subgraph_citations(client, citations_text) {
   const generated_citations_spar_text = await generateResponse(
     client,
     prompt_spar_citations,
-    "claude-3-5-sonnet-20241022",
+    "gpt-4o",
     8192
   );
   logger4.info(
@@ -1423,7 +1469,7 @@ async function get_subgraph_basic_info(client, basic_info_text) {
   const generated_graph_text = await generateResponse(
     client,
     prompt_spar_ontology_,
-    "claude-3-5-sonnet-20241022",
+    "gpt-4o",
     8192
   );
   logger4.info(`Generated SPAR graph from Claude: ${generated_graph_text}`);
@@ -1442,7 +1488,7 @@ async function get_subgraph_go(client, generated_go_subgraph) {
     const generated_graph_text = await generateResponse(
       client,
       prompt_go_ontology_,
-      "claude-3-5-sonnet-20241022",
+      "gpt-4o",
       8192
     );
     logger4.info(`Generated GO subgraph from Claude: ${generated_graph_text}`);
@@ -1591,8 +1637,8 @@ async function getSummary(client, graph) {
   let summary = "";
   try {
     const prompt = get_prompt_vectorization_summary(graph);
-    summary = await generateResponse(client, prompt);
-    logger5.info(`Generated graph summary from Claude: ${summary}`);
+    summary = await generateResponse(client, prompt, "gpt-4o");
+    logger5.info(`Generated graph summary from OpenAI: ${summary}`);
   } catch (error) {
     logger5.error("Generated graph summary exception", error);
     summary = "";
@@ -1603,35 +1649,105 @@ async function getSummary(client, graph) {
 // src/services/kaService/kaService.ts
 import { fromBuffer, fromPath } from "pdf2pic";
 import fs from "fs";
-var unstructuredApiKey = process.env.UNSTRUCTURED_API_KEY;
+var openai = new OpenAI2({ apiKey: process.env.OPENAI_API_KEY });
 async function jsonArrToKa(jsonArr, doi) {
-  const client = getClient();
-  const paperArrayDict = await processJsonArray(jsonArr, client);
-  const [
-    generatedBasicInfo,
-    generatedCitations,
-    generatedGoSubgraph,
-    generatedDoidSubgraph,
-    generatedChebiSubgraph,
-    generatedAtcSubgraph
-  ] = await process_paper(client, paperArrayDict);
+  const client = openai;
+  const validJsonArr = jsonArr.filter((el) => {
+    if (!el.text || typeof el.text !== "string") {
+      logger6.warn("Invalid paper array element", { element: el });
+      return false;
+    }
+    return true;
+  });
+  if (validJsonArr.length === 0) {
+    throw new Error("No valid text content found in paper array");
+  }
+  const maxSectionLength = 5e4;
+  const maxCitations = 100;
+  const paperArrayDict = await processJsonArray(
+    validJsonArr.map((el) => ({
+      ...el,
+      text: el.text.slice(0, maxSectionLength)
+      // Limit section length
+    })),
+    client
+  );
+  const paperDictWithLimitedCitations = {
+    ...paperArrayDict,
+    citations: paperArrayDict.citations.slice(0, maxCitations)
+  };
+  let basicInfo = "", citations = "", goSubgraph = "", doidSubgraph = "", chebiSubgraph = "", atcSubgraph = "";
+  try {
+    [
+      basicInfo,
+      citations,
+      goSubgraph,
+      doidSubgraph,
+      chebiSubgraph,
+      atcSubgraph
+    ] = await process_paper(client, paperDictWithLimitedCitations);
+  } catch (error) {
+    logger6.error("Error processing paper components", { error });
+  }
   const generatedGraph = await create_graph(
     client,
-    generatedBasicInfo,
-    generatedCitations,
+    basicInfo || "{}",
+    // Provide fallback empty objects
+    citations || "[]",
     {
-      go: generatedGoSubgraph,
-      doid: generatedDoidSubgraph,
-      chebi: generatedChebiSubgraph,
-      atc: generatedAtcSubgraph
+      go: goSubgraph || "[]",
+      doid: doidSubgraph || "[]",
+      chebi: chebiSubgraph || "[]",
+      atc: atcSubgraph || "[]"
     }
   );
-  generatedGraph["dcterms:hasPart"] = await getSummary(client, generatedGraph);
-  generatedGraph["@id"] = `https://doi.org/${doi}`;
-  const context = generatedGraph["@context"];
-  if (!("schema" in context)) {
-    context["schema"] = "http://schema.org/";
-    logger6.info("Added 'schema' to @context in KA");
+  if (typeof generatedGraph === "object" && generatedGraph !== null) {
+    try {
+      const graphForSummary = {
+        ...generatedGraph,
+        "dcterms:title": generatedGraph["dcterms:title"],
+        "@id": generatedGraph["@id"]
+      };
+      const summary = await getSummary(client, graphForSummary).catch((error) => {
+        logger6.error("Error generating summary", { error });
+        return "";
+      });
+      if (summary) {
+        generatedGraph["dcterms:hasPart"] = summary;
+      }
+    } catch (error) {
+      logger6.error("Error adding summary to graph", { error });
+    }
+  }
+  if (doi) {
+    try {
+      const cleanDoi = doi.trim().replace(/^https?:\/\/doi\.org\/?/i, "");
+      if (cleanDoi) {
+        generatedGraph["@id"] = `https://doi.org/${cleanDoi}`;
+      }
+    } catch (error) {
+      logger6.error("Error setting DOI", { error, doi });
+    }
+  }
+  try {
+    const context = generatedGraph["@context"] || {};
+    generatedGraph["@context"] = context;
+    const requiredNamespaces = {
+      "schema": "http://schema.org/",
+      "dcterms": "http://purl.org/dc/terms/",
+      "fabio": "http://purl.org/spar/fabio/"
+    };
+    for (const [prefix, uri] of Object.entries(requiredNamespaces)) {
+      if (!(prefix in context)) {
+        context[prefix] = uri;
+        logger6.info(`Added '${prefix}' namespace to @context in KA`);
+      }
+    }
+  } catch (error) {
+    logger6.error("Error managing namespaces", { error });
+  }
+  if (!generatedGraph["@type"]) {
+    generatedGraph["@type"] = "fabio:ResearchPaper";
   }
   return generatedGraph;
 }
@@ -1679,40 +1795,14 @@ var daoUals = {
   "Long Covid Labs": "did:dkg:base:84532/0xd5550173b0f7b8766ab2770e4ba86caf714a5af5/101965",
   "Quantum Biology DAO": "did:dkg:base:84532/0xd5550173b0f7b8766ab2770e4ba86caf714a5af5/101966"
 };
-async function extractDOIFromPDF(images) {
-  const client = getClient();
-  const response = await client.messages.create({
-    model: "claude-3-5-haiku-latest",
-    messages: [
-      {
-        role: "user",
-        content: [
-          ...images,
-          {
-            type: "text",
-            text: "Extract the DOI from the paper. Only return the DOI, no other text."
-          }
-        ]
-      }
-    ],
-    max_tokens: 50
-  });
-  return response.content[0].type === "text" ? response.content[0].text : void 0;
-}
-async function categorizeIntoDAOs(images) {
-  const client = getClient();
-  const response = await client.messages.create({
-    model: "claude-3-7-sonnet-20250219",
-    system: categorizeIntoDAOsPrompt,
-    messages: [
-      {
-        role: "user",
-        content: [...images]
-      }
-    ],
-    max_tokens: 50
-  });
-  return response.content[0].type === "text" ? response.content[0].text : void 0;
+function llamaIndexDocsToPaperArray(docs) {
+  return docs.map((doc, idx) => ({
+    text: doc.text,
+    metadata: {
+      page_number: doc.metadata?.page_number ?? idx + 1,
+      ...doc.metadata
+    }
+  }));
 }
 async function generateKaFromPdf(pdfPath, dkgClient) {
   const options = {
@@ -1747,12 +1837,8 @@ async function generateKaFromPdf(pdfPath, dkgClient) {
   } else {
     logger6.info(`Paper ${pdfPath} does not exist in DKG, creating`);
   }
-  const pdfBuffer = fs.readFileSync(pdfPath);
-  const paperArray = await makeUnstructuredApiRequest(
-    pdfBuffer,
-    "paper.pdf",
-    unstructuredApiKey
-  );
+  const paperArrayRaw = await makeLlamaIndexParseRequest(pdfPath);
+  const paperArray = llamaIndexDocsToPaperArray(paperArrayRaw);
   const ka = await jsonArrToKa(paperArray, doi);
   const cleanedKa = removeColonsRecursively(ka);
   const relatedDAOsString = await categorizeIntoDAOs(imageMessages);
@@ -1777,43 +1863,95 @@ async function generateKaFromPdfBuffer(pdfBuffer, dkgClient) {
   };
   const convert = fromBuffer(pdfBuffer, options);
   const storeHandler = await convert.bulk(-1, { responseType: "base64" });
-  const imageMessages = storeHandler.filter((page) => page.base64).map((page) => ({
+  let imageMessages = storeHandler.filter((page) => page.base64).map((page, index) => ({
     type: "image",
     source: {
       type: "base64",
       media_type: "image/png",
       data: page.base64
-    }
+    },
+    pageNumber: index + 1
   }));
-  logger6.info(`Extracting DOI`);
-  const doi = await extractDOIFromPDF(imageMessages);
-  if (!doi) {
-    throw new Error("Failed to extract DOI");
+  if (imageMessages.length === 0) {
+    throw new Error("No valid images could be processed from PDF");
   }
-  const paperArray = await makeUnstructuredApiRequest(
-    pdfBuffer,
-    "paper.pdf",
-    unstructuredApiKey
-  );
+  logger6.info("Attempting DOI extraction...");
+  let doi = null;
+  doi = await extractDOIFromPDF([imageMessages[0]]);
+  if (!doi && imageMessages.length > 1) {
+    logger6.info("Retrying DOI extraction on second page...");
+    doi = await extractDOIFromPDF([imageMessages[1]]);
+  }
+  if (!doi) {
+    logger6.warn("No DOI found in PDF, will proceed with limited metadata");
+    doi = `local-${Date.now()}`;
+  }
+  const tmpPath = `/tmp/ka-pdf-${Date.now()}-${Math.random().toString(36).slice(2)}.pdf`;
+  fs.writeFileSync(tmpPath, pdfBuffer);
+  const paperArrayRaw = await makeLlamaIndexParseRequest(tmpPath);
+  fs.unlinkSync(tmpPath);
+  const paperArray = llamaIndexDocsToPaperArray(paperArrayRaw);
   const ka = await jsonArrToKa(paperArray, doi);
   const cleanedKa = removeColonsRecursively(ka);
   const relatedDAOsString = await categorizeIntoDAOs(imageMessages);
   const daos = JSON.parse(relatedDAOsString);
-  const daoUalsMap = daos.map((dao) => {
-    const daoUal = daoUals[dao];
-    return {
-      "@id": daoUal,
-      "@type": "schema:Organization",
-      "schema:name": dao
-    };
-  });
+  const daoUalsMap = daos.map((dao) => ({
+    "@id": daoUals[dao],
+    "@type": "schema:Organization",
+    "schema:name": dao
+  }));
   cleanedKa["schema:relatedTo"] = daoUalsMap;
   const randomId = Math.random().toString(36).substring(2, 15);
+  const sampleDir = "sampleJsonLdsNew";
+  if (!fs.existsSync(sampleDir)) {
+    fs.mkdirSync(sampleDir, { recursive: true });
+  }
   fs.writeFileSync(
-    `sampleJsonLdsNew/ka-${randomId}.json`,
+    `${sampleDir}/ka-${randomId}.json`,
     JSON.stringify(cleanedKa, null, 2)
   );
   return cleanedKa;
+}
+async function extractDOIFromPDF(images) {
+  const limitedImages = images.slice(0, 1).map((img) => ({
+    ...img,
+    source: {
+      ...img.source,
+      // Truncate base64 to first 20,000 chars (adjust as needed)
+      data: img.source.data.slice(0, 2e4)
+    }
+  }));
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "user",
+        content: [
+          "Extract the DOI from the paper. Only return the DOI, no other text.",
+          ...limitedImages.map((img) => `![image](data:${img.source.media_type};base64,${img.source.data})`)
+        ].join("\n")
+      }
+    ],
+    max_tokens: 50
+  });
+  return response.choices[0].message.content || void 0;
+}
+async function categorizeIntoDAOs(images) {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: categorizeIntoDAOsPrompt
+      },
+      {
+        role: "user",
+        content: images.map((img) => `![image](data:${img.source.media_type};base64,${img.source.data})`).join("\n")
+      }
+    ],
+    max_tokens: 50
+  });
+  return response.choices[0].message.content || void 0;
 }
 
 // src/actions/dkgInsert.ts
@@ -1957,7 +2095,7 @@ Read my mind on @origin_trail Decentralized Knowledge Graph ${DKG_EXPLORER_LINKS
 };
 
 // src/services/index.ts
-import { Service, logger as logger10 } from "@elizaos/core";
+import { Service, logger as logger13 } from "@elizaos/core";
 import { eq } from "drizzle-orm";
 
 // src/db/schemas/fileMetadata.ts
@@ -2177,27 +2315,23 @@ var FOLDERS = {
 };
 
 // src/services/gdrive/watchFiles.ts
-import { logger as logger9 } from "@elizaos/core";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+import { logger as logger12 } from "@elizaos/core";
+import { fileURLToPath as fileURLToPath3 } from "url";
+import { dirname as dirname2 } from "path";
 import DKG2 from "dkg.js";
 import { fromBuffer as fromBuffer2 } from "pdf2pic";
 
 // src/services/gdrive/extract/config.ts
 import "dotenv/config";
-import Anthropic2 from "@anthropic-ai/sdk";
-import OpenAI from "openai";
+import OpenAI3 from "openai";
 import Instructor from "@instructor-ai/instructor";
 import path from "path";
 import fs2 from "fs";
 var __dirname = path.resolve();
 var Config = class _Config {
   static _instance;
-  static _anthropicClient;
   static _openaiClient;
   static _instructorOai;
-  static _instructorAnthropic;
-  static _anthropicModel = process.env.ANTHROPIC_MODEL || "claude-3-7-sonnet-latest";
   static _openaiModel = process.env.OPENAI_MODEL || "gpt-4o";
   static _papersDirectory = path.join(__dirname, "papers");
   static _pdf2PicOptions = {
@@ -2209,13 +2343,8 @@ var Config = class _Config {
   constructor() {
   }
   static initialize() {
-    if (!this._anthropicClient) {
-      this._anthropicClient = new Anthropic2({
-        apiKey: process.env.ANTHROPIC_API_KEY
-      });
-    }
     if (!this._openaiClient) {
-      this._openaiClient = new OpenAI({
+      this._openaiClient = new OpenAI3({
         apiKey: process.env.OPENAI_API_KEY
       });
     }
@@ -2240,21 +2369,9 @@ var Config = class _Config {
     }
     return this._instance;
   }
-  static get anthropicClient() {
-    this.getInstance();
-    return this._anthropicClient;
-  }
   static get openaiClient() {
     this.getInstance();
     return this._openaiClient;
-  }
-  static get anthropicModel() {
-    this.getInstance();
-    return this._anthropicModel;
-  }
-  static set anthropicModel(model) {
-    this.getInstance();
-    this._anthropicModel = model;
   }
   static get openaiModel() {
     this.getInstance();
@@ -2283,10 +2400,6 @@ var Config = class _Config {
   static get instructorOai() {
     this.getInstance();
     return this._instructorOai;
-  }
-  static get instructorAnthropic() {
-    this.getInstance();
-    return this._instructorAnthropic;
   }
 };
 
@@ -2510,7 +2623,7 @@ var __dirname2 = path2.resolve();
 // src/services/gdrive/storeJsonLdToKg.ts
 import { Store } from "n3";
 import { JsonLdParser } from "jsonld-streaming-parser";
-import axios4 from "axios";
+import axios3 from "axios";
 import crypto2 from "crypto";
 function addMissingIdsToJsonLd(jsonLdString) {
   const data = JSON.parse(jsonLdString);
@@ -2561,7 +2674,7 @@ async function storeJsonLd(jsonLd) {
         const ntriples = store.getQuads(null, null, null, null).map(
           (quad) => `<${quad.subject.value}> <${quad.predicate.value}> ${quad.object.termType === "Literal" ? `"${quad.object.value}"` : `<${quad.object.value}>`}.`
         ).join("\n");
-        const response = await axios4.post(
+        const response = await axios3.post(
           "http://localhost:7878/store",
           ntriples,
           {
@@ -2610,8 +2723,171 @@ var db = drizzle(pool, {
 });
 
 // src/services/gdrive/watchFiles.ts
+import fs5 from "fs";
+import path5 from "path";
+
+// src/services/ocr/landingAI.ts
+import { spawn } from "child_process";
+import { logger as logger9 } from "@elizaos/core";
+import path3 from "path";
+import fs3 from "fs";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 var __filename = fileURLToPath(import.meta.url);
 var __dirname3 = dirname(__filename);
+var SRC_DIR = path3.resolve(__dirname3, "../../..");
+var OCR_SCRIPT_PATH = path3.join(SRC_DIR, "plugin", "plugin-bioagent", "src", "services", "ocr", "ocr.py");
+logger9.info(`OCR script path: ${OCR_SCRIPT_PATH}`);
+async function runPythonScript(pdfPath) {
+  return new Promise((resolve, reject) => {
+    logger9.info(`Running OCR script on ${pdfPath}`);
+    logger9.info(`Using Python script at: ${OCR_SCRIPT_PATH}`);
+    if (!fs3.existsSync(OCR_SCRIPT_PATH)) {
+      const scriptError = new Error(`OCR script not found at ${OCR_SCRIPT_PATH}`);
+      logger9.error(scriptError);
+      reject(scriptError);
+      return;
+    }
+    const pythonProcess = spawn("python3", [OCR_SCRIPT_PATH, pdfPath]);
+    let outputPath = "";
+    let errorOutput = "";
+    pythonProcess.stdout.on("data", (data) => {
+      const output = data.toString().trim();
+      const lines = output.split("\n");
+      outputPath = lines[lines.length - 1];
+    });
+    pythonProcess.stderr.on("data", (data) => {
+      errorOutput += data.toString();
+    });
+    pythonProcess.on("close", (code) => {
+      if (code !== 0) {
+        const processError = new Error(`Python script failed with code ${code}: ${errorOutput}`);
+        logger9.error("Error processing OCR text:", processError);
+        reject(processError);
+        return;
+      }
+      if (!outputPath) {
+        reject(new Error("No output file path received from Python script"));
+        return;
+      }
+      if (!fs3.existsSync(outputPath)) {
+        reject(new Error(`Output file not found at: ${outputPath}`));
+        return;
+      }
+      resolve(outputPath);
+    });
+  });
+}
+async function processOcrText(pdfPath) {
+  try {
+    const digitizedFilePath = await runPythonScript(pdfPath);
+    const textContent = fs3.readFileSync(digitizedFilePath, "utf-8");
+    return {
+      cleanedText: textContent,
+      tables: [],
+      // Tables are now part of the text content
+      dataframes: []
+    };
+  } catch (error) {
+    logger9.error("Error processing OCR text:", error);
+    throw error;
+  }
+}
+
+// src/services/pinata/client.ts
+import axios4 from "axios";
+import FormData from "form-data";
+import { logger as logger10 } from "@elizaos/core";
+import dotenv2 from "dotenv";
+dotenv2.config();
+async function uploadToPinata(file, fileName, contentType = "text/plain") {
+  try {
+    const apiKey2 = process.env.PINATA_API_KEY;
+    const apiSecret = process.env.PINATA_API_SECRET;
+    if (!apiKey2 || !apiSecret) {
+      throw new Error("Pinata API credentials are not set in environment variables.");
+    }
+    const formData = new FormData();
+    formData.append("file", file, {
+      filename: fileName,
+      contentType
+    });
+    const response = await axios4.post(
+      "https://api.pinata.cloud/pinning/pinFileToIPFS",
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          "pinata_api_key": apiKey2,
+          "pinata_secret_api_key": apiSecret
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    logger10.error("Error uploading to Pinata:", error);
+    throw error;
+  }
+}
+
+// src/services/pinata/ocrPinataService.ts
+import { logger as logger11 } from "@elizaos/core";
+import fs4 from "fs";
+import path4 from "path";
+import { fileURLToPath as fileURLToPath2 } from "url";
+var __filename2 = fileURLToPath2(import.meta.url);
+var __dirname4 = path4.dirname(__filename2);
+async function processAndUploadDigitizedText(pdfBuffer, originalFileName) {
+  let tempPdfPath = null;
+  try {
+    if (!process.env.VISION_AGENT_API_KEY) {
+      throw new Error("VISION_AGENT_API_KEY environment variable is not set");
+    }
+    tempPdfPath = path4.join("/tmp", `temp-${Date.now()}-${originalFileName}`);
+    fs4.writeFileSync(tempPdfPath, pdfBuffer);
+    logger11.info(`Created temporary PDF file at: ${tempPdfPath}`);
+    logger11.info(`Starting OCR processing for ${originalFileName}`);
+    const ocrResult = await processOcrText(tempPdfPath);
+    logger11.info(`OCR processing completed for ${originalFileName}`);
+    const baseName = path4.parse(originalFileName).name;
+    const digitizedFileName = `${baseName}-digitized.txt`;
+    const digitizedFilePath = path4.join("digitized", digitizedFileName);
+    if (!fs4.existsSync("digitized")) {
+      logger11.info("Creating digitized directory");
+      fs4.mkdirSync("digitized", { recursive: true });
+    }
+    logger11.info(`Saving digitized text to: ${digitizedFilePath}`);
+    fs4.writeFileSync(digitizedFilePath, ocrResult.cleanedText);
+    logger11.info(`Uploading digitized text to Pinata: ${digitizedFileName}`);
+    const digitizedBuffer = Buffer.from(ocrResult.cleanedText);
+    const pinataResponse = await uploadToPinata(digitizedBuffer, digitizedFileName);
+    if (tempPdfPath) {
+      logger11.info(`Cleaning up temporary file: ${tempPdfPath}`);
+      fs4.unlinkSync(tempPdfPath);
+    }
+    logger11.info(`Successfully processed and uploaded digitized text for ${originalFileName}`);
+    logger11.info(`Digitized file saved at: ${digitizedFilePath}`);
+    logger11.info(`Pinata IPFS Hash: ${pinataResponse.IpfsHash}`);
+    return {
+      pinataResponse,
+      digitizedFilePath
+    };
+  } catch (error) {
+    logger11.error("Error in processAndUploadDigitizedText:", error);
+    if (tempPdfPath && fs4.existsSync(tempPdfPath)) {
+      try {
+        fs4.unlinkSync(tempPdfPath);
+      } catch (cleanupError) {
+        logger11.error("Error cleaning up temporary file:", cleanupError);
+      }
+    }
+    throw error;
+  }
+}
+
+// src/services/gdrive/watchFiles.ts
+var __filename3 = fileURLToPath3(import.meta.url);
+var __dirname5 = dirname2(__filename3);
 async function downloadFile(drive, file) {
   const res = await drive.files.get(
     {
@@ -2629,7 +2905,32 @@ async function downloadFile(drive, file) {
       }
     }
   );
-  return Buffer.from(res.data);
+  const buffer = Buffer.from(res.data);
+  try {
+    const result = await processAndUploadDigitizedText(
+      buffer,
+      file.name || "unnamed.pdf"
+    );
+    logger12.info(`File processed and uploaded to Pinata with hash: ${result.pinataResponse.IpfsHash}`);
+    logger12.info(`Digitized text saved at: ${result.digitizedFilePath}`);
+    const uploadsDir = path5.join(__dirname5, "../pinata/uploads");
+    if (!fs5.existsSync(uploadsDir)) {
+      fs5.mkdirSync(uploadsDir, { recursive: true });
+    }
+    const timestamp6 = (/* @__PURE__ */ new Date()).toISOString().replace(/[:.]/g, "-");
+    const safeFileName = `${timestamp6}_${(file.name || "unnamed.pdf").replace(/[^a-zA-Z0-9._-]/g, "_")}.json`;
+    const responseWithUrl = {
+      ...result.pinataResponse,
+      ipfsUrl: `https://${process.env.GATEWAY_URL}/ipfs/${result.pinataResponse.IpfsHash}`,
+      digitizedFilePath: result.digitizedFilePath
+    };
+    const responsePath = path5.join(uploadsDir, safeFileName);
+    fs5.writeFileSync(responsePath, JSON.stringify(responseWithUrl, null, 2));
+    logger12.info(`Pinata response saved to ${responsePath}`);
+  } catch (error) {
+    logger12.error("Failed to process and upload to Pinata:", error);
+  }
+  return buffer;
 }
 
 // src/services/index.ts
@@ -2641,7 +2942,7 @@ var HypothesisService = class _HypothesisService extends Service {
   static serviceType = "hypothesis";
   capabilityDescription = "Generate and judge hypotheses";
   static async start(runtime) {
-    logger10.info("*** Starting hypotheses service ***");
+    logger13.info("*** Starting hypotheses service ***");
     const service = new _HypothesisService(runtime);
     runtime.registerTaskWorker({
       name: "PROCESS_PDF",
@@ -2656,43 +2957,43 @@ var HypothesisService = class _HypothesisService extends Service {
           id: fileId
         };
         const drive = await initDriveClient();
-        logger10.info("Downloading file");
+        logger13.info("Downloading file");
         const fileBuffer = await downloadFile(drive, fileInfo);
-        logger10.info("Generating KA");
+        logger13.info("Generating KA");
         const ka = await generateKaFromPdfBuffer(fileBuffer, runtime2);
         try {
           const success = await storeJsonLd(ka);
           if (success) {
-            logger10.info("Successfully stored KA data in Oxigraph");
+            logger13.info("Successfully stored KA data in Oxigraph");
           }
         } catch (error) {
-          logger10.error("Error storing KA in knowledge graph:", error);
+          logger13.error("Error storing KA in knowledge graph:", error);
         }
-        logger10.log("task worker");
+        logger13.log("task worker");
         await runtime2.deleteTask(task.id);
         await runtime2.db.update(fileMetadataTable).set({ status: "processed" }).where(eq(fileMetadataTable.id, fileId));
       }
     });
     async function processRecurringTasks() {
-      logger10.info("Starting processing loop");
+      logger13.info("Starting processing loop");
       const now = Date.now();
       const recurringTasks = await runtime.getTasks({
         tags: ["hypothesis"]
       });
-      logger10.info("Got tasks", recurringTasks);
+      logger13.info("Got tasks", recurringTasks);
       for (const task of recurringTasks) {
         if (!task.metadata?.updateInterval) continue;
         const lastUpdate = task.metadata.updatedAt || 0;
         const interval = task.metadata.updateInterval;
-        logger10.info(`Now: ${now}`);
-        logger10.info(`Last update: ${lastUpdate}`);
-        logger10.info(`Interval: ${interval}`);
-        logger10.info(
+        logger13.info(`Now: ${now}`);
+        logger13.info(`Last update: ${lastUpdate}`);
+        logger13.info(`Interval: ${interval}`);
+        logger13.info(
           `Now >= lastUpdate + interval: ${now >= lastUpdate + interval}`
         );
-        logger10.info(`lastUpdate + interval: ${lastUpdate + interval}`);
+        logger13.info(`lastUpdate + interval: ${lastUpdate + interval}`);
         if (now >= lastUpdate + interval) {
-          logger10.info("Executing task");
+          logger13.info("Executing task");
           const worker = runtime.getTaskWorker(task.name);
           if (worker) {
             try {
@@ -2704,7 +3005,7 @@ var HypothesisService = class _HypothesisService extends Service {
                 }
               });
             } catch (error) {
-              logger10.error(`Error executing task ${task.name}: ${error}`);
+              logger13.error(`Error executing task ${task.name}: ${error}`);
             }
           }
         }
@@ -2722,7 +3023,7 @@ var HypothesisService = class _HypothesisService extends Service {
     return service;
   }
   static async stop(runtime) {
-    logger10.info("*** Stopping hypotheses service ***");
+    logger13.info("*** Stopping hypotheses service ***");
     const service = runtime.getService(_HypothesisService.serviceType);
     if (!service) {
       throw new Error("Hypotheses service not found");
@@ -2730,12 +3031,12 @@ var HypothesisService = class _HypothesisService extends Service {
     service.stop();
   }
   async stop() {
-    logger10.info("*** Stopping hypotheses service instance ***");
+    logger13.info("*** Stopping hypotheses service instance ***");
   }
 };
 
 // src/helper.ts
-import { logger as logger12 } from "@elizaos/core";
+import { logger as logger15 } from "@elizaos/core";
 import "dotenv/config";
 
 // src/db/migration.ts
@@ -2744,33 +3045,33 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
 import pkg2 from "pg";
 import "dotenv/config";
 import { existsSync, writeFileSync } from "fs";
-import path3 from "path";
-import { logger as logger11 } from "@elizaos/core";
+import path6 from "path";
+import { logger as logger14 } from "@elizaos/core";
 import { sql as sql2 } from "drizzle-orm";
 var { Pool: Pool2 } = pkg2;
 var getMigrationFlag = () => {
-  const flagPath = path3.join(process.cwd(), ".migration-complete");
+  const flagPath = path6.join(process.cwd(), ".migration-complete");
   return existsSync(flagPath);
 };
 var setMigrationFlag = () => {
-  const flagPath = path3.join(process.cwd(), ".migration-complete");
+  const flagPath = path6.join(process.cwd(), ".migration-complete");
   writeFileSync(flagPath, (/* @__PURE__ */ new Date()).toISOString());
 };
 var migrateDb = async () => {
   if (getMigrationFlag() && !process.env.FORCE_MIGRATIONS) {
-    logger11.info(
+    logger14.info(
       "Migrations already applied, skipping... (set FORCE_MIGRATIONS=true to force)"
     );
     return;
   }
   if (!process.env.POSTGRES_URL) {
-    logger11.warn(
+    logger14.warn(
       "POSTGRES_URL environment variable is not set, skipping migrations"
     );
     return;
   }
   try {
-    logger11.info("Running database migrations...");
+    logger14.info("Running database migrations...");
     const pool2 = new Pool2({
       connectionString: process.env.POSTGRES_URL
     });
@@ -2778,10 +3079,10 @@ var migrateDb = async () => {
     await db2.execute(sql2`CREATE SCHEMA IF NOT EXISTS biograph`);
     await migrate(db2, { migrationsFolder: "drizzle" });
     setMigrationFlag();
-    logger11.info("Migrations completed successfully");
+    logger14.info("Migrations completed successfully");
     await pool2.end();
   } catch (error) {
-    logger11.error("Error running migrations:", error);
+    logger14.error("Error running migrations:", error);
     throw error;
   }
 };
@@ -2792,7 +3093,7 @@ async function initWithMigrations(runtime) {
     await migrateDb();
     await initDriveSync(runtime);
   } catch (error) {
-    logger12.error("Error during initialization:", error);
+    logger15.error("Error during initialization:", error);
   }
 }
 var ENV = process.env.ENV || "dev";
@@ -2810,7 +3111,7 @@ async function watchFolderChanges(folderId, callbackUrl, drive, options = {}) {
       // 7 days
     }
   });
-  logger12.info("Watch channel created:", JSON.stringify(response.data, null, 2));
+  logger15.info("Watch channel created:", JSON.stringify(response.data, null, 2));
   return response.data;
 }
 async function stopWatchingChanges(channelId, resourceId, drive) {
@@ -2820,7 +3121,7 @@ async function stopWatchingChanges(channelId, resourceId, drive) {
       resourceId
     }
   });
-  logger12.info(`Stopped watching channel ${channelId}`);
+  logger15.info(`Stopped watching channel ${channelId}`);
 }
 async function initDriveSync(runtime) {
   const driveClient = await createDriveClient();
@@ -2848,15 +3149,15 @@ async function setupDriveSyncRecord(runtime, driveClient, queryContext) {
   const driveId = queryContext.getDriveId();
   const driveSync = await runtime.db.select().from(driveSyncTable);
   if (driveSync.length === 0) {
-    logger12.info("No drive sync found, creating new one");
+    logger15.info("No drive sync found, creating new one");
     await runtime.db.insert(driveSyncTable).values({
       id: driveId,
       startPageToken,
       driveType
     });
-    logger12.info(`Drive sync initialized with token ${startPageToken}`);
+    logger15.info(`Drive sync initialized with token ${startPageToken}`);
   } else {
-    logger12.info("Drive sync already initialized");
+    logger15.info("Drive sync already initialized");
   }
 }
 async function setupWatchChannel(runtime, driveClient, queryContext) {
@@ -2892,7 +3193,7 @@ async function setupWatchChannel(runtime, driveClient, queryContext) {
   }
 }
 async function createNewWatchChannel(runtime, driveClient, driveId, webhookUrl, queryContext) {
-  logger12.info("Creating new watch channel");
+  logger15.info("Creating new watch channel");
   const watchFolderResponse = await watchFolderChanges(
     driveId,
     webhookUrl,
@@ -2902,12 +3203,12 @@ async function createNewWatchChannel(runtime, driveClient, driveId, webhookUrl, 
   await saveWatchChannel(runtime, watchFolderResponse, driveId);
 }
 async function handleSingleChannel(runtime, driveClient, driveId, webhookUrl, queryContext, channel) {
-  logger12.info("Found one channel, checking expiration...");
+  logger15.info("Found one channel, checking expiration...");
   if (channel.expiration < /* @__PURE__ */ new Date()) {
     try {
       await stopWatchingChanges(channel.id, channel.resourceId, driveClient);
     } catch (error) {
-      logger12.error(
+      logger15.error(
         "Error stopping watching changes, continuing with new channel",
         error
       );
@@ -2921,17 +3222,17 @@ async function handleSingleChannel(runtime, driveClient, driveId, webhookUrl, qu
       queryContext
     );
   } else {
-    logger12.info("Watch channel is still valid, no need to update");
+    logger15.info("Watch channel is still valid, no need to update");
   }
 }
 async function handleMultipleChannels(runtime, driveClient, driveId, webhookUrl, queryContext, channels) {
-  logger12.info("Multiple watch channels found, cleaning up...");
+  logger15.info("Multiple watch channels found, cleaning up...");
   for (const channel of channels) {
     if (channel.expiration < /* @__PURE__ */ new Date()) {
       try {
         await stopWatchingChanges(channel.id, channel.resourceId, driveClient);
       } catch (error) {
-        logger12.error(
+        logger15.error(
           "Error stopping watching changes, continuing with next channel",
           error
         );
@@ -2955,17 +3256,17 @@ async function saveWatchChannel(runtime, watchResponse, resourceId) {
     resourceUri: watchResponse.resourceUri,
     expiration: new Date(parseInt(watchResponse.expiration))
   });
-  logger12.info(
+  logger15.info(
     `Saved watch channel ${watchResponse.id}, expires: ${new Date(parseInt(watchResponse.expiration)).toISOString()}`
   );
 }
 
 // src/routes/gdrive/webhook.ts
-import { logger as logger14 } from "@elizaos/core";
+import { logger as logger17 } from "@elizaos/core";
 
 // src/routes/controller.ts
 import { eq as eq2 } from "drizzle-orm";
-import { logger as logger13 } from "@elizaos/core";
+import { logger as logger16 } from "@elizaos/core";
 async function syncGoogleDriveChanges(runtime) {
   const driveSync = await fetchDriveSyncRecord(runtime);
   const { id: driveId, startPageToken, driveType } = driveSync;
@@ -2978,7 +3279,7 @@ async function syncGoogleDriveChanges(runtime) {
   const params = buildDriveParams(startPageToken, driveId, driveType);
   const changesResponse = await drive.changes.list(params);
   const changes = changesResponse.data.changes || [];
-  logger13.info(`Found ${changes.length} changes in Google Drive`);
+  logger16.info(`Found ${changes.length} changes in Google Drive`);
   let processedCount = 0;
   for (const change of changes) {
     if (!change.fileId) continue;
@@ -3000,7 +3301,7 @@ async function syncGoogleDriveChanges(runtime) {
 async function fetchDriveSyncRecord(runtime) {
   const driveSync = await runtime.db.select().from(driveSyncTable);
   if (driveSync.length === 0) {
-    logger13.error("No drive sync found, cannot process changes");
+    logger16.error("No drive sync found, cannot process changes");
     throw new Error("Drive sync not initialized");
   }
   return driveSync[0];
@@ -3024,11 +3325,11 @@ function buildDriveParams(startPageToken, driveId, driveType) {
 }
 async function processChange(runtime, change) {
   if (change.removed) {
-    logger13.info(`File ${change.fileId} removed from trash - no action needed`);
+    logger16.info(`File ${change.fileId} removed from trash - no action needed`);
     return;
   }
   if (change.file?.trashed) {
-    logger13.info(
+    logger16.info(
       `File ${change.fileId} moved to trash - removing from database`
     );
     await runtime.db.delete(fileMetadataTable).where(eq2(fileMetadataTable.id, change.fileId));
@@ -3040,12 +3341,12 @@ async function processChange(runtime, change) {
 }
 async function processFile(runtime, file) {
   if (file.mimeType !== "application/pdf") {
-    logger13.info(`Skipping non-PDF file: ${file.name} (${file.mimeType})`);
+    logger16.info(`Skipping non-PDF file: ${file.name} (${file.mimeType})`);
     return;
   }
   const fileExists = await runtime.db.select().from(fileMetadataTable).where(eq2(fileMetadataTable.hash, file.md5Checksum));
   if (fileExists.length > 0) {
-    logger13.info(`File ${file.name} already exists, skipping`);
+    logger16.info(`File ${file.name} already exists, skipping`);
     return;
   }
   const result = await runtime.db.insert(fileMetadataTable).values({
@@ -3063,9 +3364,9 @@ async function processFile(runtime, file) {
       id: file.id
     }
   }).returning();
-  logger13.info(`Result: ${JSON.stringify(result)}`);
+  logger16.info(`Result: ${JSON.stringify(result)}`);
   if (result.length > 0) {
-    logger13.info(`Adding task to queue: ${file.name}`);
+    logger16.info(`Adding task to queue: ${file.name}`);
     await runtime.createTask({
       name: "PROCESS_PDF",
       description: "Convert PDF to RDF triples and save to Oxigraph",
@@ -3078,17 +3379,23 @@ async function processFile(runtime, file) {
         modifiedAt: /* @__PURE__ */ new Date()
       }
     });
-    logger13.info(`Saved/updated file metadata for ${file.name} (${file.id})`);
+    logger16.info(`Saved/updated file metadata for ${file.name} (${file.id})`);
   } else {
-    logger13.info(`File ${file.name} hasn't changed, skipping task creation`);
+    logger16.info(`File ${file.name} hasn't changed, skipping task creation`);
   }
 }
 async function updatePageToken(runtime, driveId, newToken) {
+  const current = await runtime.db.select().from(driveSyncTable).where(eq2(driveSyncTable.id, driveId));
+  const prevToken = current[0]?.startPageToken;
+  if (prevToken === newToken) {
+    logger16.info(`Page token unchanged (${newToken}), skipping update.`);
+    return;
+  }
   await runtime.db.update(driveSyncTable).set({
     startPageToken: newToken,
     lastSyncAt: /* @__PURE__ */ new Date()
   }).where(eq2(driveSyncTable.id, driveId));
-  logger13.info(`Updated start page token to: ${newToken}`);
+  logger16.info(`Updated start page token from: ${prevToken} to: ${newToken}`);
 }
 
 // src/routes/gdrive/webhook.ts
@@ -3097,38 +3404,38 @@ var gdriveWebhook = {
   type: "POST",
   handler: async (req, res, runtime) => {
     try {
-      logger14.info("Google Drive webhook triggered");
+      logger17.info("Google Drive webhook triggered");
       const channelId = req.headers["x-goog-channel-id"];
       if (!channelId) {
-        logger14.warn("Missing x-goog-channel-id header in webhook request");
+        logger17.warn("Missing x-goog-channel-id header in webhook request");
         return res.status(400).json({
           message: "Missing required channel ID header"
         });
       }
       const channels = await runtime.db.select().from(gdriveChannelsTable);
       if (channels.length === 0) {
-        logger14.warn("No channels found in database");
+        logger17.warn("No channels found in database");
         return res.status(500).json({
           message: "No channels configured"
         });
       }
       const validChannelId = channels[0].id;
       if (channelId !== validChannelId) {
-        logger14.warn(
+        logger17.warn(
           `Invalid channel ID received: ${channelId}, expected: ${validChannelId}`
         );
         return res.status(403).json({
           message: "Invalid channel ID"
         });
       }
-      logger14.info(`Valid webhook from channel: ${channelId}`);
+      logger17.info(`Valid webhook from channel: ${channelId}`);
       const result = await syncGoogleDriveChanges(runtime);
       res.json({
         message: "OK",
         ...result
       });
     } catch (error) {
-      logger14.error("Error processing Google Drive webhook:", error);
+      logger17.error("Error processing Google Drive webhook:", error);
       res.status(500).json({
         message: "Error processing webhook",
         error: error.message
@@ -3138,25 +3445,32 @@ var gdriveWebhook = {
 };
 
 // src/routes/gdrive/manualSync.ts
-import { logger as logger15 } from "@elizaos/core";
+import { logger as logger18 } from "@elizaos/core";
 var gdriveManualSync = {
   path: "/gdrive/sync",
   type: "GET",
   handler: async (_req, res, runtime) => {
     try {
-      logger15.info("Manual Google Drive sync triggered");
-      const result = await syncGoogleDriveChanges(runtime);
-      logger15.info(`Changes: ${result.changes}`);
-      while (result.changes > 0) {
-        logger15.info(`Changes: ${result.changes}`);
-        await syncGoogleDriveChanges(runtime);
+      logger18.info("Manual Google Drive sync triggered");
+      let result = await syncGoogleDriveChanges(runtime);
+      logger18.info(`Changes: ${result.changes}`);
+      let iterations = 0;
+      const maxIterations = 10;
+      while (result.changes > 0 && iterations < maxIterations) {
+        logger18.info(`Sync iteration ${iterations + 1}, changes: ${result.changes}`);
+        result = await syncGoogleDriveChanges(runtime);
+        iterations++;
+      }
+      if (iterations === maxIterations) {
+        logger18.warn("Max sync iterations reached. There may be a stuck state or repeated changes.");
       }
       res.json({
         message: "Sync completed successfully",
-        ...result
+        ...result,
+        iterations
       });
     } catch (error) {
-      logger15.error("Error during manual Google Drive sync:", error);
+      logger18.error("Error during manual Google Drive sync:", error);
       res.status(500).json({
         message: "Error during sync",
         error: error.message
@@ -3185,8 +3499,8 @@ __export(actions_exports, {
 // src/index.ts
 var dkgPlugin = {
   init: async (config, runtime) => {
-    logger16.info("Initializing dkg plugin");
-    logger16.info(config);
+    logger19.info("Initializing dkg plugin");
+    logger19.info(config);
     setTimeout(async () => {
       await initWithMigrations(runtime);
     }, 2e4);
