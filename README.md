@@ -1,4 +1,4 @@
-#Chronos
+# Chronos
 
  An eliza OS agentic system designed for clinicians and biomedical researchers, combining a semantic network with an autonomous hypothesis engine. It extracts overlooked insights from historical spine surgery records and traditional medical texts, structuring them into RDF triple stores such as [Oxigraph](https://github.com/oxigraph/oxigraph) that bridges ancient wisdom with contemporary science. 
 
